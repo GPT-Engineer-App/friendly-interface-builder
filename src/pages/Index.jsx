@@ -4,9 +4,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Trash2, ChevronsUpDown } from "lucide-react";
+import { Plus, Trash2, ChevronsUpDown, RotateCcw } from "lucide-react";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const customers = [
   { value: "customer1", label: "Customer 1" },
@@ -56,7 +57,24 @@ const Index = () => {
 
   return (
     <div className="container mx-auto p-6 space-y-6">
-      <div className="bg-white p-6 rounded-lg shadow">
+      <div className="bg-white p-6 rounded-lg shadow relative">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                onClick={handleReset}
+                variant="outline"
+                size="icon"
+                className="absolute top-2 right-2"
+              >
+                <RotateCcw className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Reset all fields</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
             <label htmlFor="endpoint" className="block text-sm font-medium text-gray-700 mb-1">Endpoint:</label>
@@ -105,7 +123,6 @@ const Index = () => {
             </Popover>
           </div>
         </div>
-        <Button onClick={handleReset} variant="outline" className="w-full">Reset</Button>
       </div>
 
       <div className="bg-white p-6 rounded-lg shadow">
