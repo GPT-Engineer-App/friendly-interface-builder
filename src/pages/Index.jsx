@@ -57,24 +57,29 @@ const Index = () => {
 
   return (
     <div className="container mx-auto p-6 space-y-6">
+
       <div className="bg-white p-6 rounded-lg shadow relative">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                onClick={handleReset}
-                variant="outline"
-                size="icon"
-                className="absolute top-2 right-2"
-              >
-                <RotateCcw className="h-4 w-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Reset all fields</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  onClick={handleReset}
+                  variant="outline"
+                  size="icon"
+                >
+                  <RotateCcw className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Reset all fields</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+      </div>
+
+      <div className="bg-white p-6 rounded-lg shadow relative">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
             <label htmlFor="endpoint" className="block text-sm font-medium text-gray-700 mb-1">Endpoint:</label>
@@ -87,40 +92,12 @@ const Index = () => {
           </div>
           <div className="flex flex-col">
             <label htmlFor="customer" className="block text-sm font-medium text-gray-700 mb-1">Customer:</label>
-            <Popover open={open} onOpenChange={setOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  role="combobox"
-                  aria-expanded={open}
-                  className="w-full justify-between"
-                >
-                  {customer
-                    ? customers.find((c) => c.value === customer)?.label
-                    : "Select customer..."}
-                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-[200px] p-0">
-                <Command>
-                  <CommandInput placeholder="Search customer..." />
-                  <CommandEmpty>No customer found.</CommandEmpty>
-                  <CommandGroup>
-                    {customers.map((c) => (
-                      <CommandItem
-                        key={c.value}
-                        onSelect={(currentValue) => {
-                          setCustomer(currentValue === customer ? "" : currentValue);
-                          setOpen(false);
-                        }}
-                      >
-                        {c.label}
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                </Command>
-              </PopoverContent>
-            </Popover>
+            <Input
+              id="customer"
+              value={customer}
+              onChange={(e) => setCustomer(e.target.value)}
+              className="w-full"
+            />
           </div>
         </div>
       </div>
@@ -153,45 +130,16 @@ const Index = () => {
             {tableRows.map((row, index) => (
               <TableRow key={index}>
                 <TableCell className="w-[40%]">
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        role="combobox"
-                        className="w-full justify-start"
-                      >
-                        {row.sku && row.product ? (
-                          <span className="text-left">
-                            {row.sku}<br />{row.product}
-                          </span>
-                        ) : (
-                          "Select product..."
-                        )}
-                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-[300px] p-0">
-                      <Command>
-                        <CommandInput placeholder="Search product..." />
-                        <CommandEmpty>No product found.</CommandEmpty>
-                        <CommandGroup>
-                          {products.map((product) => (
-                            <CommandItem
-                              key={product.sku}
-                              onSelect={() => {
-                                updateRow(index, 'sku', product.sku);
-                                updateRow(index, 'product', product.name);
-                              }}
-                            >
-                              <span className="text-left">
-                                {product.sku}<br />{product.name}
-                              </span>
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
+                  <Select>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="AIRMEE" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="airmee">AIRMEE</SelectItem>
+                      <SelectItem value="default">DEFAULT</SelectItem>
+                      <SelectItem value="klarna">KLARNA</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </TableCell>
                 <TableCell className="w-[20%]">
                   <Input
@@ -229,6 +177,97 @@ const Index = () => {
           <Plus className="h-4 w-4 mr-2" /> Add Product
         </Button>
       </div>
+
+      <div className="w-full  mx-auto p-4 bg-white shadow-md rounded-lg">
+        <table className="w-full border-collapse">
+          <thead>
+            <tr className="border-b">
+              <th className="text-left p-2 font-medium"></th>
+              <th className="text-left p-2 font-medium">Shipping</th>
+              <th className="text-left p-2 font-medium">Handling</th>
+              <th className="text-left p-2 font-medium">Payment</th>
+              <th className="text-left p-2 font-medium">Other Discounts</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td className="p-2 font-medium text-right">Revenue</td>
+              <td className="p-2">
+                <Input type="number" defaultValue={0} step="0.01" className="w-full" />
+              </td>
+              <td className="p-2">
+                <Input type="number" defaultValue={0} step="0.01" className="w-full" />
+              </td>
+              <td className="p-2">
+                <Input type="number" defaultValue={0} step="0.01" className="w-full" />
+              </td>
+              <td className="p-2"></td>
+            </tr>
+            <tr>
+              <td className="p-2 font-medium text-right">Cost</td>
+              <td className="p-2">
+                <Input type="number" defaultValue={0} step="0.01" className="w-full" />
+              </td>
+              <td className="p-2">
+                <Input type="number" defaultValue={0} step="0.01" className="w-full" />
+              </td>
+              <td className="p-2">
+                <Input type="number" defaultValue={0} step="0.01" className="w-full" />
+              </td>
+              <td className="p-2">
+                <Input type="number" defaultValue={0} step="0.01" className="w-full" />
+              </td>
+            </tr>
+            <tr>
+              <td className="p-2 font-medium text-right">Type</td>
+              <td className="p-2">
+                <div className="relative">
+                  <Select>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="AIRMEE" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="airmee">AIRMEE</SelectItem>
+                      <SelectItem value="default">DEFAULT</SelectItem>
+                      <SelectItem value="klarna">KLARNA</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </td>
+              <td className="p-2">
+                <div className="relative">
+                  <Select>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="AIRMEE" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="airmee">AIRMEE</SelectItem>
+                      <SelectItem value="default">DEFAULT</SelectItem>
+                      <SelectItem value="klarna">KLARNA</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </td>
+              <td className="p-2">
+                <div className="relative">
+                  <Select>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="AIRMEE" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="airmee">AIRMEE</SelectItem>
+                      <SelectItem value="default">DEFAULT</SelectItem>
+                      <SelectItem value="klarna">KLARNA</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </td>
+              <td className="p-2"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
 
       <div className="bg-white p-6 rounded-lg shadow">
         <div className="grid grid-cols-4 gap-4 mb-4">
