@@ -95,3 +95,25 @@ input:focus, select:focus, textarea:focus {
   border-color: #4299e1;
   box-shadow: 0 0 0 1px #4299e1;
 }
+
+/* Remove borders on controls within labels */
+label input,
+label select,
+label textarea,
+label button {
+  border: none !important;
+}
+
+/* Add subtle background for better visibility */
+label input,
+label select,
+label textarea {
+  background-color: #f3f4f6;
+}
+
+/* Add hover effect for better user experience */
+label input:hover,
+label select:hover,
+label textarea:hover {
+  background-color: #e5e7eb;
+}
