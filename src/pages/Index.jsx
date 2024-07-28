@@ -15,6 +15,14 @@ const customers = [
   // Add more customers as needed
 ];
 
+const products = [
+  { sku: "SKU-4577-736", name: "Sneakers" },
+  { sku: "SKU-1234-567", name: "T-Shirt" },
+  { sku: "SKU-8901-234", name: "Jeans" },
+  { sku: "SKU-5678-901", name: "Jacket" },
+  // Add more products as needed
+];
+
 const Index = () => {
   const [endpoint, setEndpoint] = useState("hw-red-panda-123456");
   const [customer, setCustomer] = useState("");
@@ -125,19 +133,45 @@ const Index = () => {
             {tableRows.map((row, index) => (
               <TableRow key={index}>
                 <TableCell>
-                  <div>
-                    <Input
-                      value={row.sku}
-                      onChange={(e) => updateRow(index, 'sku', e.target.value)}
-                      placeholder="SKU"
-                      className="mb-2"
-                    />
-                    <Input
-                      value={row.product}
-                      onChange={(e) => updateRow(index, 'product', e.target.value)}
-                      placeholder="Product Name"
-                    />
-                  </div>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        className="w-full justify-start"
+                      >
+                        {row.sku && row.product ? (
+                          <span className="text-left">
+                            {row.sku}<br />{row.product}
+                          </span>
+                        ) : (
+                          "Select product..."
+                        )}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[300px] p-0">
+                      <Command>
+                        <CommandInput placeholder="Search product..." />
+                        <CommandEmpty>No product found.</CommandEmpty>
+                        <CommandGroup>
+                          {products.map((product) => (
+                            <CommandItem
+                              key={product.sku}
+                              onSelect={() => {
+                                updateRow(index, 'sku', product.sku);
+                                updateRow(index, 'product', product.name);
+                              }}
+                            >
+                              <span className="text-left">
+                                {product.sku}<br />{product.name}
+                              </span>
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
                 </TableCell>
                 <TableCell>
                   <Input
