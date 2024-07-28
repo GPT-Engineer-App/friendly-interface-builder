@@ -216,9 +216,9 @@ const Index = () => {
           <TableHeader>
             <TableRow>
               <TableHead className="w-[40%]">Product</TableHead>
-              <TableHead className="w-[20%] text-right">Qty</TableHead>
-              <TableHead className="w-[20%] text-right">Price</TableHead>
-              <TableHead className="w-[20%] text-right">Discount</TableHead>
+              <TableHead className="w-[20%]">Qty</TableHead>
+              <TableHead className="w-[20%]">Price</TableHead>
+              <TableHead className="w-[20%]">Discount</TableHead>
               <TableHead></TableHead>
             </TableRow>
           </TableHeader>
