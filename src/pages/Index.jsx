@@ -31,7 +31,7 @@ const products = [
 ];
 
 const Index = () => {
-  const [headwaiId, setHeadwaiId] = useState("hw-red-panda-123456");
+  const [headwaiId, setHeadwaiId] = useState("");
   const [customer, setCustomer] = useState("");
   const [monitorDataLayer, setMonitorDataLayer] = useState(true);
   const [tableRows, setTableRows] = useState([
@@ -150,6 +150,40 @@ const Index = () => {
     setGp2plus(randomGp2plus);
   }
 
+  if (!headwaiId) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+        <div className="w-full max-w-md p-8 space-y-4 bg-white rounded-lg shadow-md">
+          <h2 className="text-2xl font-bold text-center text-gray-800">Enter Headw.ai Id</h2>
+          <div className="space-y-2">
+            <label htmlFor="headwaiId" className="text-sm font-medium text-gray-700">
+              Headw.ai Id:
+            </label>
+            <Input
+              id="headwaiId"
+              type="text"
+              placeholder="Enter your Headw.ai Id"
+              value={headwaiId}
+              onChange={(e) => setHeadwaiId(e.target.value)}
+            />
+          </div>
+          <Button
+            className="w-full"
+            onClick={() => {
+              if (headwaiId.trim()) {
+                toast.success("Headw.ai Id set successfully");
+              } else {
+                toast.error("Please enter a valid Headw.ai Id");
+              }
+            }}
+          >
+            Set
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto p-6 space-y-6">
 
@@ -174,7 +208,7 @@ const Index = () => {
           </TooltipProvider>
         </div>
 
-        <Button variant="outline" onClick="handleClearHeadwaiId">
+        <Button variant="outline" onClick={handleClearHeadwaiId}>
           <X className="mr-2 h-4 w-4" />
           { headwaiId }
         </Button>
