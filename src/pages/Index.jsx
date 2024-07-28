@@ -4,13 +4,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Trash2, ChevronsUpDown, RotateCcw } from "lucide-react";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Plus, Trash2, RotateCcw, Sparkles } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const customers = [
-  { value: "customer1", label: "Customer 1" },
+  { value: "customer1", label: "Customer 1" }, 
   { value: "customer2", label: "Customer 2" },
   { value: "customer3", label: "Customer 3" },
   // Add more customers as needed
@@ -123,7 +121,7 @@ const Index = () => {
               <TableHead className="w-[20%]">Qty</TableHead>
               <TableHead className="w-[20%]">Price</TableHead>
               <TableHead className="w-[20%]">Discount</TableHead>
-              <TableHead>Actions</TableHead>
+              <TableHead></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -173,7 +171,7 @@ const Index = () => {
             ))}
           </TableBody>
         </Table>
-        <Button onClick={addProduct} className="mt-4">
+        <Button onClick={addProduct} className="mt-4" variant="secondary">
           <Plus className="h-4 w-4 mr-2" /> Add Product
         </Button>
       </div>
@@ -183,15 +181,15 @@ const Index = () => {
           <thead>
             <tr className="border-b">
               <th className="text-left p-2 font-medium"></th>
-              <th className="text-left p-2 font-medium">Shipping</th>
-              <th className="text-left p-2 font-medium">Handling</th>
-              <th className="text-left p-2 font-medium">Payment</th>
-              <th className="text-left p-2 font-medium">Other Discounts</th>
+              <th className="text-left text-sm p-2 font-medium">Shipping</th>
+              <th className="text-left text-sm p-2 font-medium">Handling</th>
+              <th className="text-left text-sm p-2 font-medium">Payment</th>
+              <th className="text-left text-sm p-2 font-medium">Other Discounts</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td className="p-2 font-medium text-right">Revenue</td>
+              <td className="p-2 font-medium text-right text-sm">Revenue</td>
               <td className="p-2">
                 <Input type="number" defaultValue={0} step="0.01" className="w-full" />
               </td>
@@ -204,7 +202,7 @@ const Index = () => {
               <td className="p-2"></td>
             </tr>
             <tr>
-              <td className="p-2 font-medium text-right">Cost</td>
+              <td className="p-2 font-medium text-right text-sm">Cost</td>
               <td className="p-2">
                 <Input type="number" defaultValue={0} step="0.01" className="w-full" />
               </td>
@@ -219,7 +217,7 @@ const Index = () => {
               </td>
             </tr>
             <tr>
-              <td className="p-2 font-medium text-right">Type</td>
+              <td className="p-2 font-medium text-right text-sm">Type</td>
               <td className="p-2">
                 <div className="relative">
                   <Select>
@@ -268,50 +266,10 @@ const Index = () => {
         </table>
       </div>
 
+      <Button>
+        <Sparkles className="mr-2 h-4 w-4"/> Predict
+      </Button>
 
-      <div className="bg-white p-6 rounded-lg shadow">
-        <div className="grid grid-cols-4 gap-4 mb-4">
-          <div className="col-span-4 md:col-span-1">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Revenue:</label>
-            <Input type="number" defaultValue={0} step="0.01" className="w-full" />
-          </div>
-          <div className="col-span-4 md:col-span-1">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Cost:</label>
-            <Input type="number" defaultValue={0} step="0.01" className="w-full" />
-          </div>
-          <div className="col-span-4 md:col-span-1">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Shipping:</label>
-            <Input type="number" defaultValue={0} step="0.01" className="w-full" />
-          </div>
-          <div className="col-span-4 md:col-span-1">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Handling:</label>
-            <Input type="number" defaultValue={0} step="0.01" className="w-full" />
-          </div>
-          <div className="col-span-4 md:col-span-1">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Payment:</label>
-            <Input type="number" defaultValue={0} step="0.01" className="w-full" />
-          </div>
-          <div className="col-span-4 md:col-span-1">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Other Discounts:</label>
-            <Input type="number" defaultValue={0} step="0.01" className="w-full" />
-          </div>
-          <div className="col-span-4 md:col-span-1">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Type:</label>
-            <Select>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="AIRMEE" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="airmee">AIRMEE</SelectItem>
-                <SelectItem value="default">DEFAULT</SelectItem>
-                <SelectItem value="klarna">KLARNA</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      </div>
-
-      <Button className="w-full">Predict</Button>
     </div>
   );
 };
