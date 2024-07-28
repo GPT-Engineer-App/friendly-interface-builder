@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import { FlashingValueDisplay } from "@/components/ui/flashing-value-display";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Trash2, RotateCcw, Sparkles, CalendarIcon, Clock } from "lucide-react";
@@ -48,6 +49,8 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [autoPredict, setAutoPredict] = useState(true);
+  
+  const [gp2plus, setGp2plus] = useState(0);
 
   const handleReset = () => {
     setEndpoint("");
@@ -102,6 +105,11 @@ const Index = () => {
       setShowModal(true);
     }, 3000);
   };
+
+  const handleGp2 = () => {
+    const randomGp2plus = Math.random() * 100;
+    setGp2plus(randomGp2plus);
+  }
 
   return (
     <div className="container mx-auto p-6 space-y-6">
@@ -249,7 +257,7 @@ const Index = () => {
                     type="number"
                     value={row.price}
                     onChange={(e) => updateRow(index, 'price', parseFloat(e.target.value))}
-                    step="0.01"
+                    step="0.1"
                   />
                 </TableCell>
                 <TableCell className="w-[20%]">
@@ -257,7 +265,7 @@ const Index = () => {
                     type="number"
                     value={row.discount}
                     onChange={(e) => updateRow(index, 'discount', parseFloat(e.target.value))}
-                    step="0.01"
+                    step="0.1"
                   />
                 </TableCell>
                 <TableCell>
@@ -453,8 +461,10 @@ const Index = () => {
             Auto
           </label>
         </div>
+        {/* <Button onClick={handleGp2}>Randomize GP2+</Button> */}
       </div>
 
+      <div className="flex space-x-4">
       <div className="w-64 bg-white">
         <table className="w-full">
           <tbody>
@@ -474,6 +484,12 @@ const Index = () => {
               <td className="p-3 text-sm font-medium">Payment</td>
               <td className="p-3 text-sm text-right">123</td>
             </tr>
+          </tbody>
+        </table>
+      </div>
+      <div className="w-64 bg-white">
+        <table className="w-full">
+          <tbody>
             <tr className="bg-gray-50">
               <td className="p-3 text-sm font-medium">GP1</td>
               <td className="p-3 text-sm text-right">123</td>
@@ -492,11 +508,18 @@ const Index = () => {
             </tr>
             <tr className="bg-gray-50">
               <td className="p-3 text-sm font-medium">GP2+</td>
-              <td className="p-3 text-sm text-right">1234556</td>
+              <td className="p-3 text-sm text-right">
+                <FlashingValueDisplay value={gp2plus} formatValue={(v) => `$${v.toFixed(2)}`}/>
+              </td>
             </tr>
           </tbody>
         </table>
       </div>
+
+
+      </div>
+
+      
 
       <Dialog open={showModal} onOpenChange={setShowModal}>
         <DialogContent>
