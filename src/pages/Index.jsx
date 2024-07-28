@@ -32,6 +32,7 @@ const products = [
 
 const Index = () => {
   const [headwaiId, setHeadwaiId] = useState("");
+  const [isHeadwaiIdSet, setIsHeadwaiIdSet] = useState(false);
   const [customer, setCustomer] = useState("");
   const [monitorDataLayer, setMonitorDataLayer] = useState(true);
   const [tableRows, setTableRows] = useState([
@@ -56,6 +57,7 @@ const Index = () => {
     const storedHeadwaiId = localStorage.getItem('headwaiId');
     if (storedHeadwaiId) {
       setHeadwaiId(storedHeadwaiId);
+      setIsHeadwaiIdSet(true);
     }
   }, []);
 
@@ -77,6 +79,7 @@ const Index = () => {
 
   const handleClearHeadwaiId = () => {
     setHeadwaiId("");
+    setIsHeadwaiIdSet(false);
     localStorage.removeItem('headwaiId');
   }
 
@@ -161,13 +164,14 @@ const Index = () => {
   const handleSetHeadwaiId = () => {
     if (headwaiId.trim()) {
       localStorage.setItem('headwaiId', headwaiId);
+      setIsHeadwaiIdSet(true);
       toast.success("Headw.ai Id set successfully");
     } else {
       toast.error("Please enter a valid Headw.ai Id");
     }
   };
 
-  if (!headwaiId) {
+  if (!isHeadwaiIdSet) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
         <div className="w-full max-w-md p-8 space-y-4 bg-white rounded-lg shadow-md">
