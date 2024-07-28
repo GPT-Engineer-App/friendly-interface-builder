@@ -53,7 +53,6 @@ const Index = () => {
   const [gp2plus, setGp2plus] = useState(0);
 
   const handleReset = () => {
-    setHeadwaiId("");
     setCustomer("");
     setMonitorDataLayer(true);
     setTableRows([{ sku: "", product: "", qty: 0, price: 0, discount: 0 }]);
@@ -173,7 +172,7 @@ const Index = () => {
 
         <Button variant="outline">
           <X className="mr-2 h-4 w-4" />
-          hw-red-panda-123456
+          { headwaiId }
         </Button>
 
       </div>
