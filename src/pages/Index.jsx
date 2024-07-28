@@ -4,8 +4,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Trash2, RotateCcw, Sparkles } from "lucide-react";
+import { Plus, Trash2, RotateCcw, Sparkles, CalendarIcon } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
 const customers = [
   { value: "customer1", label: "Customer 1" }, 
@@ -30,12 +34,14 @@ const Index = () => {
   const [tableRows, setTableRows] = useState([
     { sku: "SKU-4577-736", product: "Sneakers", qty: 1, price: 123456.78, discount: 4568.90 }
   ]);
+  const [date, setDate] = useState(new Date());
 
   const handleReset = () => {
     setEndpoint("");
     setCustomer("");
     setMonitorDataLayer(true);
     setTableRows([{ sku: "", product: "", qty: 0, price: 0, discount: 0 }]);
+    setDate(new Date());
   };
 
   const addProduct = () => {
@@ -78,7 +84,7 @@ const Index = () => {
       </div>
 
       <div className="bg-white p-6 rounded-lg shadow relative">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           <div>
             <label htmlFor="endpoint" className="block text-sm font-medium text-gray-700 mb-1">Endpoint:</label>
             <Input
@@ -96,6 +102,31 @@ const Index = () => {
               onChange={(e) => setCustomer(e.target.value)}
               className="w-full"
             />
+          </div>
+          <div className="flex flex-col">
+            <label htmlFor="datetime" className="block text-sm font-medium text-gray-700 mb-1">Date and Time:</label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant={"outline"}
+                  className={cn(
+                    "w-full justify-start text-left font-normal",
+                    !date && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {date ? format(date, "PPP") : <span>Pick a date</span>}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0">
+                <Calendar
+                  mode="single"
+                  selected={date}
+                  onSelect={setDate}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
       </div>
