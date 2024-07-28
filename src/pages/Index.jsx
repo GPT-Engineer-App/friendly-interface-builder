@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { FlashingValueDisplay } from "@/components/ui/flashing-value-display";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -30,6 +31,14 @@ const products = [
   { sku: "SKU-8901-234", name: "Jeans" },
   { sku: "SKU-5678-901", name: "Jacket" },
   // Add more products as needed
+];
+
+const frameworks = [
+  { value: "next.js", label: "Next.js" },
+  { value: "sveltekit", label: "SvelteKit" },
+  { value: "nuxt.js", label: "Nuxt.js" },
+  { value: "remix", label: "Remix" },
+  { value: "astro", label: "Astro" },
 ];
 
 const Index = () => {
@@ -573,6 +582,14 @@ const Index = () => {
                 <td className="p-3 text-sm font-medium">Payment</td>
                 <td className="p-3 text-sm text-right">123</td>
               </tr>
+              <tr className="bg-gray-50">
+                <td className="p-3 text-sm font-medium">Return</td>
+                <td className="p-3 text-sm text-right">123</td>
+              </tr>
+              <tr>
+                <td className="p-3 text-sm font-medium">Future GP2</td>
+                <td className="p-3 text-sm text-right">123</td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -614,7 +631,13 @@ const Index = () => {
             </tbody>
           </table>
         </div>
-        <JsonView src={ tableRows }/>
+        {/* <JsonView src={ tableRows }/>
+        <SearchableSelect
+        options={frameworks}
+        placeholder="Select framework..."
+        emptyMessage="No framework found."
+        onChange={(value) => console.log(value)}
+      /> */}
       </div>
       <Dialog open={showModal} onOpenChange={setShowModal}>
         <DialogContent>
