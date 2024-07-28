@@ -5,16 +5,36 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
+import { Plus, Minus } from "lucide-react";
 
 const Index = () => {
   const [endpoint, setEndpoint] = useState("hw-red-panda-123456");
   const [customer, setCustomer] = useState("");
   const [monitorDataLayer, setMonitorDataLayer] = useState(false);
+  const [tableRows, setTableRows] = useState([
+    { sku: "SKU-4577-736", product: "Sneakers", qty: 1, price: 123456, discount: 4568 }
+  ]);
 
   const handleReset = () => {
     setEndpoint("");
     setCustomer("");
     setMonitorDataLayer(false);
+    setTableRows([{ sku: "", product: "", qty: 0, price: 0, discount: 0 }]);
+  };
+
+  const addRow = () => {
+    setTableRows([...tableRows, { sku: "", product: "", qty: 0, price: 0, discount: 0 }]);
+  };
+
+  const removeRow = (index) => {
+    const newRows = tableRows.filter((_, i) => i !== index);
+    setTableRows(newRows);
+  };
+
+  const updateRow = (index, field, value) => {
+    const newRows = [...tableRows];
+    newRows[index][field] = value;
+    setTableRows(newRows);
   };
 
   return (
@@ -64,17 +84,60 @@ const Index = () => {
                 <TableHead>Qty</TableHead>
                 <TableHead>Price</TableHead>
                 <TableHead>Discount</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              <TableRow>
-                <TableCell>SKU-4577-736 Sneakers</TableCell>
-                <TableCell>1</TableCell>
-                <TableCell>123456</TableCell>
-                <TableCell>4568</TableCell>
-              </TableRow>
+              {tableRows.map((row, index) => (
+                <TableRow key={index}>
+                  <TableCell>
+                    <div>
+                      <Input
+                        value={row.sku}
+                        onChange={(e) => updateRow(index, 'sku', e.target.value)}
+                        placeholder="SKU"
+                        className="mb-2"
+                      />
+                      <Input
+                        value={row.product}
+                        onChange={(e) => updateRow(index, 'product', e.target.value)}
+                        placeholder="Product Name"
+                      />
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Input
+                      type="number"
+                      value={row.qty}
+                      onChange={(e) => updateRow(index, 'qty', parseInt(e.target.value))}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Input
+                      type="number"
+                      value={row.price}
+                      onChange={(e) => updateRow(index, 'price', parseInt(e.target.value))}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Input
+                      type="number"
+                      value={row.discount}
+                      onChange={(e) => updateRow(index, 'discount', parseInt(e.target.value))}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Button onClick={() => removeRow(index)} variant="destructive" size="icon">
+                      <Minus className="h-4 w-4" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
+          <Button onClick={addRow} className="mt-4">
+            <Plus className="h-4 w-4 mr-2" /> Add Row
+          </Button>
         </CardContent>
       </Card>
 
