@@ -177,34 +177,44 @@ const Index = () => {
       </div>
 
       <div className="bg-white p-6 rounded-lg shadow">
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
-          {["Shipping", "Handling", "Payment", "Other Discounts", "Revenue", "Cost"].map((label) => (
-            <div key={label}>
-              <label htmlFor={label.toLowerCase()} className="block text-sm font-medium text-gray-700 mb-1">{label}:</label>
-              <Input
-                id={label.toLowerCase()}
-                type="number"
-                defaultValue={0}
-                step="0.01"
-                className="w-full"
-              />
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="bg-white p-6 rounded-lg shadow">
-        <div className="flex flex-wrap gap-4 mb-4">
-          {["AIRMEE", "DEFAULT", "KLARNA"].map((type) => (
-            <Select key={type}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder={type} />
+        <div className="grid grid-cols-4 gap-4 mb-4">
+          <div className="col-span-4 md:col-span-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Revenue:</label>
+            <Input type="number" defaultValue={0} step="0.01" className="w-full" />
+          </div>
+          <div className="col-span-4 md:col-span-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Cost:</label>
+            <Input type="number" defaultValue={0} step="0.01" className="w-full" />
+          </div>
+          <div className="col-span-4 md:col-span-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Shipping:</label>
+            <Input type="number" defaultValue={0} step="0.01" className="w-full" />
+          </div>
+          <div className="col-span-4 md:col-span-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Handling:</label>
+            <Input type="number" defaultValue={0} step="0.01" className="w-full" />
+          </div>
+          <div className="col-span-4 md:col-span-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Payment:</label>
+            <Input type="number" defaultValue={0} step="0.01" className="w-full" />
+          </div>
+          <div className="col-span-4 md:col-span-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Other Discounts:</label>
+            <Input type="number" defaultValue={0} step="0.01" className="w-full" />
+          </div>
+          <div className="col-span-4 md:col-span-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Type:</label>
+            <Select>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="AIRMEE" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={type.toLowerCase()}>{type}</SelectItem>
+                <SelectItem value="airmee">AIRMEE</SelectItem>
+                <SelectItem value="default">DEFAULT</SelectItem>
+                <SelectItem value="klarna">KLARNA</SelectItem>
               </SelectContent>
             </Select>
-          ))}
+          </div>
         </div>
       </div>
 
