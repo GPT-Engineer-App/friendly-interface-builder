@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { Spinner } from "@/components/ui/spinner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const customers = [
   { value: "customer1", label: "Customer 1" }, 
@@ -39,6 +41,8 @@ const Index = () => {
   const [showRuntime, setShowRuntime] = useState(true);
   const [predictShipping, setPredictShipping] = useState(true);
   const [shippingCost, setShippingCost] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const handleReset = () => {
     setEndpoint("");
@@ -81,9 +85,16 @@ const Index = () => {
     return `${dateString} ${time}`;
   };
 
+  const handlePredict = () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      setShowModal(true);
+    }, 3000);
+  };
+
   return (
     <div className="container mx-auto p-6 space-y-6">
-
       <div className="relative">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <TooltipProvider>
@@ -362,9 +373,25 @@ const Index = () => {
         </table>
       </div>
 
-      <Button>
-        <Sparkles className="mr-2 h-4 w-4"/> Predict
+      <Button onClick={handlePredict} disabled={isLoading}>
+        {isLoading ? (
+          <Spinner className="mr-2 h-4 w-4" />
+        ) : (
+          <Sparkles className="mr-2 h-4 w-4" />
+        )}
+        Predict
       </Button>
+
+      <Dialog open={showModal} onOpenChange={setShowModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Prediction Result</DialogTitle>
+          </DialogHeader>
+          <div className="p-4">
+            <p>HelloWorld</p>
+          </div>
+        </DialogContent>
+      </Dialog>
 
     </div>
   );
