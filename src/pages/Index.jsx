@@ -27,7 +27,7 @@ const Index = () => {
   const [endpoint, setEndpoint] = useState("hw-red-panda-123456");
   const [customer, setCustomer] = useState("");
   const [open, setOpen] = useState(false);
-  const [monitorDataLayer, setMonitorDataLayer] = useState(false);
+  const [monitorDataLayer, setMonitorDataLayer] = useState(true);
   const [tableRows, setTableRows] = useState([
     { sku: "SKU-4577-736", product: "Sneakers", qty: 1, price: 123456.78, discount: 4568.90 }
   ]);
@@ -35,7 +35,7 @@ const Index = () => {
   const handleReset = () => {
     setEndpoint("");
     setCustomer("");
-    setMonitorDataLayer(false);
+    setMonitorDataLayer(true);
     setTableRows([{ sku: "", product: "", qty: 0, price: 0, discount: 0 }]);
   };
 
