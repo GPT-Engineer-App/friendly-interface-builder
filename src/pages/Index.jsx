@@ -14,7 +14,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const customers = [
-  { value: "customer1", label: "Customer 1" }, 
+  { value: "customer1", label: "Customer 1" },
   { value: "customer2", label: "Customer 2" },
   { value: "customer3", label: "Customer 3" },
   // Add more customers as needed
@@ -38,9 +38,13 @@ const Index = () => {
   ]);
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState("12:00");
-  const [showRuntime, setShowRuntime] = useState(true);
-  const [predictShipping, setPredictShipping] = useState(true);
+  const [showOrderDate, setShowOrderDate] = useState(true);
+  const [predictShippingCost, setPredictShippingCost] = useState(true);
+  const [predictHandlingCost, setPredictHandlingCost] = useState(true);
+  const [predictPaymentCost, setPredictPaymentCost] = useState(true);
   const [shippingCost, setShippingCost] = useState(0);
+  const [handlingCost, setHandlingCost] = useState(0);
+  const [paymentCost, setPaymentCost] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [autoPredict, setAutoPredict] = useState(true);
@@ -52,9 +56,13 @@ const Index = () => {
     setTableRows([{ sku: "", product: "", qty: 0, price: 0, discount: 0 }]);
     setDate(new Date());
     setTime("12:00");
-    setShowRuntime(true);
-    setPredictShipping(true);
+    setShowOrderDate(true);
+    setPredictShippingCost(true);
+    setPredictHandlingCost(true);
+    setPredictPaymentCost(true);
     setShippingCost(0);
+    setHandlingCost(0);
+    setPaymentCost(0);
     setAutoPredict(true);
   };
 
@@ -139,16 +147,16 @@ const Index = () => {
             />
           </div>
           <div className="flex flex-col">
-            <label htmlFor="datetime" className="block text-sm font-medium text-gray-700 mb-1">Date and Time:</label>
-            {showRuntime ? (
+            <label htmlFor="datetime" className="block text-sm font-medium text-gray-700 mb-1">Order Date:</label>
+            {showOrderDate ? (
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="runtime"
-                  checked={!showRuntime}
-                  onCheckedChange={() => setShowRuntime(false)}
+                  checked={showOrderDate}
+                  onCheckedChange={() => setShowOrderDate(false)}
                 />
                 <label htmlFor="runtime" className="text-sm font-medium text-gray-700">
-                  Runtime
+                  Use Current Time
                 </label>
               </div>
             ) : (
@@ -208,9 +216,9 @@ const Index = () => {
           <TableHeader>
             <TableRow>
               <TableHead className="w-[40%]">Product</TableHead>
-              <TableHead className="w-[20%]">Qty</TableHead>
-              <TableHead className="w-[20%]">Price</TableHead>
-              <TableHead className="w-[20%]">Discount</TableHead>
+              <TableHead className="w-[20%] text-right">Qty</TableHead>
+              <TableHead className="w-[20%] text-right">Price</TableHead>
+              <TableHead className="w-[20%] text-right">Discount</TableHead>
               <TableHead></TableHead>
             </TableRow>
           </TableHeader>
@@ -281,14 +289,27 @@ const Index = () => {
             <tr>
               <td className="p-2 font-medium text-right text-sm">Revenue</td>
               <td className="p-2">
-                {predictShipping ? (
+                <Input type="number" defaultValue={0} step="0.01" className="w-full" />
+              </td>
+              <td className="p-2">
+                <Input type="number" defaultValue={0} step="0.01" className="w-full" />
+              </td>
+              <td className="p-2">
+                <Input type="number" defaultValue={0} step="0.01" className="w-full" />
+              </td>
+              <td className="p-2"></td>
+            </tr>
+            <tr>
+              <td className="p-2 font-medium text-right text-sm">Cost</td>
+              <td className="p-2">
+                {predictShippingCost ? (
                   <div className="flex items-center space-x-2">
                     <Checkbox
-                      id="predictShipping"
-                      checked={predictShipping}
-                      onCheckedChange={() => setPredictShipping(false)}
+                      id="predictShippingCost"
+                      checked={predictShippingCost}
+                      onCheckedChange={() => setPredictShippingCost(false)}
                     />
-                    <label htmlFor="predictShipping" className="text-sm font-medium text-gray-700">
+                    <label htmlFor="predictShippingCost" className="text-sm font-medium text-gray-700">
                       Predict
                     </label>
                   </div>
@@ -303,23 +324,48 @@ const Index = () => {
                 )}
               </td>
               <td className="p-2">
-                <Input type="number" defaultValue={0} step="0.01" className="w-full" />
+                {predictHandlingCost ? (
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="predictHandlingCost"
+                      checked={predictHandlingCost}
+                      onCheckedChange={() => setPredictHandlingCost(false)}
+                    />
+                    <label htmlFor="predictHandlingCost" className="text-sm font-medium text-gray-700">
+                      Predict
+                    </label>
+                  </div>
+                ) : (
+                  <Input
+                    type="number"
+                    value={handlingCost}
+                    onChange={(e) => setHandlingCost(parseFloat(e.target.value))}
+                    step="0.01"
+                    className="w-full"
+                  />
+                )}
               </td>
               <td className="p-2">
-                <Input type="number" defaultValue={0} step="0.01" className="w-full" />
-              </td>
-              <td className="p-2"></td>
-            </tr>
-            <tr>
-              <td className="p-2 font-medium text-right text-sm">Cost</td>
-              <td className="p-2">
-                <Input type="number" defaultValue={0} step="0.01" className="w-full" />
-              </td>
-              <td className="p-2">
-                <Input type="number" defaultValue={0} step="0.01" className="w-full" />
-              </td>
-              <td className="p-2">
-                <Input type="number" defaultValue={0} step="0.01" className="w-full" />
+                {predictPaymentCost ? (
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="predictPaymentCost"
+                      checked={predictPaymentCost}
+                      onCheckedChange={() => setPredictPaymentCost(false)}
+                    />
+                    <label htmlFor="predictPaymentCost" className="text-sm font-medium text-gray-700">
+                      Predict
+                    </label>
+                  </div>
+                ) : (
+                  <Input
+                    type="number"
+                    value={handlingCost}
+                    onChange={(e) => setPaymentCost(parseFloat(e.target.value))}
+                    step="0.01"
+                    className="w-full"
+                  />
+                )}
               </td>
               <td className="p-2">
                 <Input type="number" defaultValue={0} step="0.01" className="w-full" />
@@ -369,7 +415,20 @@ const Index = () => {
                   </Select>
                 </div>
               </td>
-              <td className="p-2"></td>
+              <td className="p-2">
+                <div className="relative">
+                  <Select>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="AIRMEE" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="airmee">AIRMEE</SelectItem>
+                      <SelectItem value="default">DEFAULT</SelectItem>
+                      <SelectItem value="klarna">KLARNA</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -394,6 +453,49 @@ const Index = () => {
             Auto
           </label>
         </div>
+      </div>
+
+      <div className="w-64 bg-white">
+        <table className="w-full">
+          <tbody>
+            <tr className="bg-gray-50">
+              <td className="p-3 text-sm font-medium">Cogs</td>
+              <td className="p-3 text-sm text-right">123</td>
+            </tr>
+            <tr>
+              <td className="p-3 text-sm font-medium">Shipping</td>
+              <td className="p-3 text-sm text-right">123</td>
+            </tr>
+            <tr className="bg-gray-50">
+              <td className="p-3 text-sm font-medium">Handling</td>
+              <td className="p-3 text-sm text-right">123</td>
+            </tr>
+            <tr>
+              <td className="p-3 text-sm font-medium">Payment</td>
+              <td className="p-3 text-sm text-right">123</td>
+            </tr>
+            <tr className="bg-gray-50">
+              <td className="p-3 text-sm font-medium">GP1</td>
+              <td className="p-3 text-sm text-right">123</td>
+            </tr>
+            <tr>
+              <td className="p-3 text-sm font-medium">GM1</td>
+              <td className="p-3 text-sm text-right">10%</td>
+            </tr>
+            <tr className="bg-gray-50">
+              <td className="p-3 text-sm font-medium">GP2</td>
+              <td className="p-3 text-sm text-right">123</td>
+            </tr>
+            <tr>
+              <td className="p-3 text-sm font-medium">GM2</td>
+              <td className="p-3 text-sm text-right">10%</td>
+            </tr>
+            <tr className="bg-gray-50">
+              <td className="p-3 text-sm font-medium">GP2+</td>
+              <td className="p-3 text-sm text-right">1234556</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
       <Dialog open={showModal} onOpenChange={setShowModal}>
