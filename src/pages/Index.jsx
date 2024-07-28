@@ -21,7 +21,7 @@ const Index = () => {
   const [open, setOpen] = useState(false);
   const [monitorDataLayer, setMonitorDataLayer] = useState(false);
   const [tableRows, setTableRows] = useState([
-    { sku: "SKU-4577-736", product: "Sneakers", qty: 1, price: 123456, discount: 4568 }
+    { sku: "SKU-4577-736", product: "Sneakers", qty: 1, price: 123456.78, discount: 4568.90 }
   ]);
 
   const handleReset = () => {
@@ -150,14 +150,16 @@ const Index = () => {
                   <Input
                     type="number"
                     value={row.price}
-                    onChange={(e) => updateRow(index, 'price', parseInt(e.target.value))}
+                    onChange={(e) => updateRow(index, 'price', parseFloat(e.target.value))}
+                    step="0.01"
                   />
                 </TableCell>
                 <TableCell>
                   <Input
                     type="number"
                     value={row.discount}
-                    onChange={(e) => updateRow(index, 'discount', parseInt(e.target.value))}
+                    onChange={(e) => updateRow(index, 'discount', parseFloat(e.target.value))}
+                    step="0.01"
                   />
                 </TableCell>
                 <TableCell>
@@ -183,6 +185,7 @@ const Index = () => {
                 id={label.toLowerCase()}
                 type="number"
                 defaultValue={0}
+                step="0.01"
                 className="w-full"
               />
             </div>
