@@ -13,6 +13,7 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Spinner } from "@/components/ui/spinner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { toast } from "sonner";
 
 const customers = [
   { value: "customer1", label: "Customer 1" },
@@ -98,12 +99,50 @@ const Index = () => {
     return `${dateString} ${time}`;
   };
 
-  const handlePredict = () => {
+  const handlePredict = async () => {
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
+    const requestData = {
+      endpoint,
+      customer,
+      monitorDataLayer,
+      products: tableRows,
+      orderDate: showOrderDate ? new Date().toISOString() : `${format(date, "yyyy-MM-dd")}T${time}:00`,
+      shipping: {
+        cost: predictShippingCost ? null : shippingCost,
+        predict: predictShippingCost
+      },
+      handling: {
+        cost: predictHandlingCost ? null : handlingCost,
+        predict: predictHandlingCost
+      },
+      payment: {
+        cost: predictPaymentCost ? null : paymentCost,
+        predict: predictPaymentCost
+      }
+    };
+
+    try {
+      const response = await fetch('https://webhook.site/2fa325f7-e3f7-41f2-a502-cc1c75c8d899', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const result = await response.json();
       setShowModal(true);
-    }, 3000);
+      toast.success("Prediction request sent successfully");
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error("Failed to send prediction request");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleGp2 = () => {
@@ -519,7 +558,7 @@ const Index = () => {
             <DialogTitle>Prediction Result</DialogTitle>
           </DialogHeader>
           <div className="p-4">
-            <p>HelloWorld</p>
+            <p>Prediction request sent successfully. Check the webhook for details.</p>
           </div>
         </DialogContent>
       </Dialog>
