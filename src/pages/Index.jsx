@@ -31,7 +31,7 @@ const products = [
 ];
 
 const Index = () => {
-  const [endpoint, setEndpoint] = useState("hw-red-panda-123456");
+  const [headwaiId, setHeadwaiId] = useState("hw-red-panda-123456");
   const [customer, setCustomer] = useState("");
   const [monitorDataLayer, setMonitorDataLayer] = useState(true);
   const [tableRows, setTableRows] = useState([
@@ -53,7 +53,7 @@ const Index = () => {
   const [gp2plus, setGp2plus] = useState(0);
 
   const handleReset = () => {
-    setEndpoint("");
+    setHeadwaiId("");
     setCustomer("");
     setMonitorDataLayer(true);
     setTableRows([{ sku: "", product: "", qty: 0, price: 0, discount: 0 }]);
@@ -101,7 +101,7 @@ const Index = () => {
   const handlePredict = async () => {
     setIsLoading(true);
     const requestData = {
-      endpoint,
+      endpoint: headwaiId,
       customer,
       monitorDataLayer,
       products: tableRows,
