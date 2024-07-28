@@ -44,17 +44,6 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [autoPredict, setAutoPredict] = useState(true);
-  const [predictedValues, setPredictedValues] = useState({
-    cogs: 123,
-    shipping: 123,
-    handling: 123,
-    payment: 123,
-    gp1: 123,
-    gm1: "10%",
-    gp2: 123,
-    gm2: "10%",
-    ltv: 1234556
-  });
 
   const handleReset = () => {
     setEndpoint("");
@@ -67,17 +56,6 @@ const Index = () => {
     setPredictShipping(true);
     setShippingCost(0);
     setAutoPredict(true);
-    setPredictedValues({
-      cogs: 0,
-      shipping: 0,
-      handling: 0,
-      payment: 0,
-      gp1: 0,
-      gm1: "0%",
-      gp2: 0,
-      gm2: "0%",
-      ltv: 0
-    });
   };
 
   const addProduct = () => {
@@ -114,18 +92,6 @@ const Index = () => {
     setTimeout(() => {
       setIsLoading(false);
       setShowModal(true);
-      // Simulating prediction results
-      setPredictedValues({
-        cogs: 123,
-        shipping: 123,
-        handling: 123,
-        payment: 123,
-        gp1: 123,
-        gm1: "10%",
-        gp2: 123,
-        gm2: "10%",
-        ltv: 1234556
-      });
     }, 3000);
   };
 
@@ -409,44 +375,24 @@ const Index = () => {
         </table>
       </div>
 
-      <div className="flex flex-col items-start space-y-4">
-        <div className="flex items-center space-x-4">
-          <Button onClick={handlePredict} disabled={isLoading || autoPredict}>
-            {isLoading ? (
-              <Spinner className="mr-2 h-4 w-4" />
-            ) : (
-              <Sparkles className="mr-2 h-4 w-4" />
-            )}
-            Predict
-          </Button>
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="autoPredict"
-              checked={autoPredict}
-              onCheckedChange={setAutoPredict}
-            />
-            <label htmlFor="autoPredict" className="text-sm font-medium text-gray-700">
-              Auto
-            </label>
-          </div>
-        </div>
-        
-        <div className="grid grid-cols-3 gap-4 text-sm">
-          <div>
-            <p><span className="font-medium">Cogs:</span> {predictedValues.cogs}</p>
-            <p><span className="font-medium">Shipping:</span> {predictedValues.shipping}</p>
-            <p><span className="font-medium">Handling:</span> {predictedValues.handling}</p>
-          </div>
-          <div>
-            <p><span className="font-medium">Payment:</span> {predictedValues.payment}</p>
-            <p><span className="font-medium">GP1:</span> {predictedValues.gp1}</p>
-            <p><span className="font-medium">GM1:</span> {predictedValues.gm1}</p>
-          </div>
-          <div>
-            <p><span className="font-medium">GP2:</span> {predictedValues.gp2}</p>
-            <p><span className="font-medium">GM2:</span> {predictedValues.gm2}</p>
-            <p><span className="font-medium">LTV:</span> {predictedValues.ltv}</p>
-          </div>
+      <div className="flex items-center space-x-4">
+        <Button onClick={handlePredict} disabled={isLoading || autoPredict}>
+          {isLoading ? (
+            <Spinner className="mr-2 h-4 w-4" />
+          ) : (
+            <Sparkles className="mr-2 h-4 w-4" />
+          )}
+          Predict
+        </Button>
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="autoPredict"
+            checked={autoPredict}
+            onCheckedChange={setAutoPredict}
+          />
+          <label htmlFor="autoPredict" className="text-sm font-medium text-gray-700">
+            Auto
+          </label>
         </div>
       </div>
 
