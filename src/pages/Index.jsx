@@ -36,6 +36,7 @@ const Index = () => {
   ]);
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState("12:00");
+  const [showRuntime, setShowRuntime] = useState(true);
 
   const handleReset = () => {
     setEndpoint("");
@@ -44,6 +45,7 @@ const Index = () => {
     setTableRows([{ sku: "", product: "", qty: 0, price: 0, discount: 0 }]);
     setDate(new Date());
     setTime("12:00");
+    setShowRuntime(true);
   };
 
   const addProduct = () => {
@@ -121,39 +123,52 @@ const Index = () => {
           </div>
           <div className="flex flex-col">
             <label htmlFor="datetime" className="block text-sm font-medium text-gray-700 mb-1">Date and Time:</label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant={"outline"}
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !date && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {formatDateTime()}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={handleDateTimeChange}
-                  initialFocus
+            {showRuntime ? (
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="runtime"
+                  checked={!showRuntime}
+                  onCheckedChange={() => setShowRuntime(false)}
                 />
-                <div className="p-3 border-t border-gray-200">
-                  <div className="flex items-center">
-                    <Clock className="mr-2 h-4 w-4" />
-                    <Input
-                      type="time"
-                      value={time}
-                      onChange={handleTimeChange}
-                      className="w-full"
-                    />
+                <label htmlFor="runtime" className="text-sm font-medium text-gray-700">
+                  Runtime
+                </label>
+              </div>
+            ) : (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !date && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {formatDateTime()}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={date}
+                    onSelect={handleDateTimeChange}
+                    initialFocus
+                  />
+                  <div className="p-3 border-t border-gray-200">
+                    <div className="flex items-center">
+                      <Clock className="mr-2 h-4 w-4" />
+                      <Input
+                        type="time"
+                        value={time}
+                        onChange={handleTimeChange}
+                        className="w-full"
+                      />
+                    </div>
                   </div>
-                </div>
-              </PopoverContent>
-            </Popover>
+                </PopoverContent>
+              </Popover>
+            )}
           </div>
         </div>
       </div>
