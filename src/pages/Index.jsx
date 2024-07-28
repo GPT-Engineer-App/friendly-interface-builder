@@ -4,7 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Trash2, RotateCcw, Sparkles, CalendarIcon } from "lucide-react";
+import { Plus, Trash2, RotateCcw, Sparkles, CalendarIcon, Clock } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
@@ -35,6 +35,7 @@ const Index = () => {
     { sku: "SKU-4577-736", product: "Sneakers", qty: 1, price: 123456.78, discount: 4568.90 }
   ]);
   const [date, setDate] = useState(new Date());
+  const [time, setTime] = useState("12:00");
 
   const handleReset = () => {
     setEndpoint("");
@@ -42,6 +43,7 @@ const Index = () => {
     setMonitorDataLayer(true);
     setTableRows([{ sku: "", product: "", qty: 0, price: 0, discount: 0 }]);
     setDate(new Date());
+    setTime("12:00");
   };
 
   const addProduct = () => {
@@ -57,6 +59,20 @@ const Index = () => {
     const newRows = [...tableRows];
     newRows[index][field] = value;
     setTableRows(newRows);
+  };
+
+  const handleDateTimeChange = (newDate) => {
+    setDate(newDate);
+  };
+
+  const handleTimeChange = (e) => {
+    setTime(e.target.value);
+  };
+
+  const formatDateTime = () => {
+    if (!date) return "Pick a date and time";
+    const dateString = format(date, "PPP");
+    return `${dateString} ${time}`;
   };
 
   return (
@@ -115,16 +131,27 @@ const Index = () => {
                   )}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {date ? format(date, "PPP") : <span>Pick a date</span>}
+                  {formatDateTime()}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
+              <PopoverContent className="w-auto p-0" align="start">
                 <Calendar
                   mode="single"
                   selected={date}
-                  onSelect={setDate}
+                  onSelect={handleDateTimeChange}
                   initialFocus
                 />
+                <div className="p-3 border-t border-gray-200">
+                  <div className="flex items-center">
+                    <Clock className="mr-2 h-4 w-4" />
+                    <Input
+                      type="time"
+                      value={time}
+                      onChange={handleTimeChange}
+                      className="w-full"
+                    />
+                  </div>
+                </div>
               </PopoverContent>
             </Popover>
           </div>
