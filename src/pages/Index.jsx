@@ -52,6 +52,13 @@ const Index = () => {
 
   const [gp2plus, setGp2plus] = useState(0);
 
+  useEffect(() => {
+    const storedHeadwaiId = localStorage.getItem('headwaiId');
+    if (storedHeadwaiId) {
+      setHeadwaiId(storedHeadwaiId);
+    }
+  }, []);
+
   const handleReset = () => {
     setCustomer("");
     setMonitorDataLayer(true);
@@ -70,6 +77,7 @@ const Index = () => {
 
   const handleClearHeadwaiId = () => {
     setHeadwaiId("");
+    localStorage.removeItem('headwaiId');
   }
 
   const addProduct = () => {
@@ -150,6 +158,15 @@ const Index = () => {
     setGp2plus(randomGp2plus);
   }
 
+  const handleSetHeadwaiId = () => {
+    if (headwaiId.trim()) {
+      localStorage.setItem('headwaiId', headwaiId);
+      toast.success("Headw.ai Id set successfully");
+    } else {
+      toast.error("Please enter a valid Headw.ai Id");
+    }
+  };
+
   if (!headwaiId) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
@@ -169,13 +186,7 @@ const Index = () => {
           </div>
           <Button
             className="w-full"
-            onClick={() => {
-              if (headwaiId.trim()) {
-                toast.success("Headw.ai Id set successfully");
-              } else {
-                toast.error("Please enter a valid Headw.ai Id");
-              }
-            }}
+            onClick={handleSetHeadwaiId}
           >
             Set
           </Button>
