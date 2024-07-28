@@ -142,17 +142,17 @@ const Index = () => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Product</TableHead>
-              <TableHead>Qty</TableHead>
-              <TableHead>Price</TableHead>
-              <TableHead>Discount</TableHead>
+              <TableHead className="w-[40%]">Product</TableHead>
+              <TableHead className="w-[20%]">Qty</TableHead>
+              <TableHead className="w-[20%]">Price</TableHead>
+              <TableHead className="w-[20%]">Discount</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {tableRows.map((row, index) => (
               <TableRow key={index}>
-                <TableCell>
+                <TableCell className="w-[40%]">
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button
@@ -193,14 +193,14 @@ const Index = () => {
                     </PopoverContent>
                   </Popover>
                 </TableCell>
-                <TableCell>
+                <TableCell className="w-[20%]">
                   <Input
                     type="number"
                     value={row.qty}
                     onChange={(e) => updateRow(index, 'qty', parseInt(e.target.value))}
                   />
                 </TableCell>
-                <TableCell>
+                <TableCell className="w-[20%]">
                   <Input
                     type="number"
                     value={row.price}
@@ -208,7 +208,7 @@ const Index = () => {
                     step="0.01"
                   />
                 </TableCell>
-                <TableCell>
+                <TableCell className="w-[20%]">
                   <Input
                     type="number"
                     value={row.discount}
