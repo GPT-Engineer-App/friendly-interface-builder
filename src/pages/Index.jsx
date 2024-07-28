@@ -37,6 +37,8 @@ const Index = () => {
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState("12:00");
   const [showRuntime, setShowRuntime] = useState(true);
+  const [predictShipping, setPredictShipping] = useState(true);
+  const [shippingCost, setShippingCost] = useState(0);
 
   const handleReset = () => {
     setEndpoint("");
@@ -46,6 +48,8 @@ const Index = () => {
     setDate(new Date());
     setTime("12:00");
     setShowRuntime(true);
+    setPredictShipping(true);
+    setShippingCost(0);
   };
 
   const addProduct = () => {
@@ -264,7 +268,26 @@ const Index = () => {
             <tr>
               <td className="p-2 font-medium text-right text-sm">Revenue</td>
               <td className="p-2">
-                <Input type="number" defaultValue={0} step="0.01" className="w-full" />
+                {predictShipping ? (
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="predictShipping"
+                      checked={predictShipping}
+                      onCheckedChange={() => setPredictShipping(false)}
+                    />
+                    <label htmlFor="predictShipping" className="text-sm font-medium text-gray-700">
+                      Predict
+                    </label>
+                  </div>
+                ) : (
+                  <Input
+                    type="number"
+                    value={shippingCost}
+                    onChange={(e) => setShippingCost(parseFloat(e.target.value))}
+                    step="0.01"
+                    className="w-full"
+                  />
+                )}
               </td>
               <td className="p-2">
                 <Input type="number" defaultValue={0} step="0.01" className="w-full" />
