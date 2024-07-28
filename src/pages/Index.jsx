@@ -5,8 +5,7 @@ import { Button } from "@/components/ui/button";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import { FlashingValueDisplay } from "@/components/ui/flashing-value-display";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Trash2, RotateCcw, Sparkles, CalendarIcon, Clock, X } from "lucide-react";
+import { Plus, Trash2, RotateCcw, Sparkles, CalendarIcon, Clock, X, CheckIcon, CaretSortIcon } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
@@ -17,6 +16,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { toast } from "sonner";
 import JsonView from 'react18-json-view'
 import 'react18-json-view/src/style.css'
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command"
 
 const customers = [
   { value: "customer1", label: "Customer 1" },
@@ -41,6 +41,12 @@ const frameworks = [
   { value: "astro", label: "Astro" },
 ];
 
+const typeOptions = [
+  { value: "airmee", label: "AIRMEE" },
+  { value: "default", label: "DEFAULT" },
+  { value: "klarna", label: "KLARNA" },
+];
+
 const Index = () => {
   const [headwaiId, setHeadwaiId] = useState("");
   const [isHeadwaiIdSet, setIsHeadwaiIdSet] = useState(false);
@@ -61,6 +67,10 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [autoPredict, setAutoPredict] = useState(false);
+  const [shippingType, setShippingType] = useState("airmee");
+  const [handlingType, setHandlingType] = useState("airmee");
+  const [paymentType, setPaymentType] = useState("airmee");
+  const [otherDiscountsType, setOtherDiscountsType] = useState("airmee");
 
   const [gp2plus, setGp2plus] = useState(0);
 
@@ -86,6 +96,10 @@ const Index = () => {
     setHandlingCost(0);
     setPaymentCost(0);
     setAutoPredict(true);
+    setShippingType("airmee");
+    setHandlingType("airmee");
+    setPaymentType("airmee");
+    setOtherDiscountsType("airmee");
   };
 
   const handleClearHeadwaiId = () => {
@@ -133,15 +147,21 @@ const Index = () => {
       orderDate: showOrderDate ? new Date().toISOString() : `${format(date, "yyyy-MM-dd")}T${time}:00`,
       shipping: {
         cost: predictShippingCost ? null : shippingCost,
-        predict: predictShippingCost
+        predict: predictShippingCost,
+        type: shippingType
       },
       handling: {
         cost: predictHandlingCost ? null : handlingCost,
-        predict: predictHandlingCost
+        predict: predictHandlingCost,
+        type: handlingType
       },
       payment: {
         cost: predictPaymentCost ? null : paymentCost,
-        predict: predictPaymentCost
+        predict: predictPaymentCost,
+        type: paymentType
+      },
+      otherDiscounts: {
+        type: otherDiscountsType
       }
     };
 
@@ -180,6 +200,53 @@ const Index = () => {
     } else {
       toast.error("Please enter a valid Headw.ai Id");
     }
+  };
+
+  const SearchableSelect = ({ value, onChange, options }) => {
+    const [open, setOpen] = useState(false);
+
+    return (
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            className="w-full justify-between"
+          >
+            {value
+              ? options.find((option) => option.value === value)?.label
+              : "Select..."}
+            <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-[200px] p-0">
+          <Command>
+            <CommandInput placeholder="Search..." className="h-9" />
+            <CommandEmpty>No option found.</CommandEmpty>
+            <CommandGroup>
+              {options.map((option) => (
+                <CommandItem
+                  key={option.value}
+                  onSelect={() => {
+                    onChange(option.value);
+                    setOpen(false);
+                  }}
+                >
+                  {option.label}
+                  <CheckIcon
+                    className={cn(
+                      "ml-auto h-4 w-4",
+                      value === option.value ? "opacity-100" : "opacity-0"
+                    )}
+                  />
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </Command>
+        </PopoverContent>
+      </Popover>
+    );
   };
 
   if (!isHeadwaiIdSet) {
@@ -271,16 +338,11 @@ const Index = () => {
             {tableRows.map((row, index) => (
               <TableRow key={index}>
                 <TableCell className="w-[40%]">
-                  <Select>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="SKU-123456789" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="airmee">AIRMEE</SelectItem>
-                      <SelectItem value="default">DEFAULT</SelectItem>
-                      <SelectItem value="klarna">KLARNA</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <SearchableSelect
+                    value={row.sku}
+                    onChange={(value) => updateRow(index, 'sku', value)}
+                    options={products.map(product => ({ value: product.sku, label: `${product.name} (${product.sku})` }))}
+                  />
                 </TableCell>
                 <TableCell className="w-[20%]">
                   <Input
@@ -480,60 +542,32 @@ const Index = () => {
             <tr>
               <td className="p-2 font-medium text-right text-sm">Type</td>
               <td className="p-2">
-                <div className="relative">
-                  <Select>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="AIRMEE" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="airmee">AIRMEE</SelectItem>
-                      <SelectItem value="default">DEFAULT</SelectItem>
-                      <SelectItem value="klarna">KLARNA</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                <SearchableSelect
+                  value={shippingType}
+                  onChange={setShippingType}
+                  options={typeOptions}
+                />
               </td>
               <td className="p-2">
-                <div className="relative">
-                  <Select>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="AIRMEE" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="airmee">AIRMEE</SelectItem>
-                      <SelectItem value="default">DEFAULT</SelectItem>
-                      <SelectItem value="klarna">KLARNA</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                <SearchableSelect
+                  value={handlingType}
+                  onChange={setHandlingType}
+                  options={typeOptions}
+                />
               </td>
               <td className="p-2">
-                <div className="relative">
-                  <Select>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="AIRMEE" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="airmee">AIRMEE</SelectItem>
-                      <SelectItem value="default">DEFAULT</SelectItem>
-                      <SelectItem value="klarna">KLARNA</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                <SearchableSelect
+                  value={paymentType}
+                  onChange={setPaymentType}
+                  options={typeOptions}
+                />
               </td>
               <td className="p-2">
-                <div className="relative">
-                  <Select>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="AIRMEE" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="airmee">AIRMEE</SelectItem>
-                      <SelectItem value="default">DEFAULT</SelectItem>
-                      <SelectItem value="klarna">KLARNA</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                <SearchableSelect
+                  value={otherDiscountsType}
+                  onChange={setOtherDiscountsType}
+                  options={typeOptions}
+                />
               </td>
             </tr>
           </tbody>
