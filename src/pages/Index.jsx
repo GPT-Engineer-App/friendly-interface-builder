@@ -43,6 +43,7 @@ const Index = () => {
   const [shippingCost, setShippingCost] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [autoPredict, setAutoPredict] = useState(true);
 
   const handleReset = () => {
     setEndpoint("");
@@ -54,6 +55,7 @@ const Index = () => {
     setShowRuntime(true);
     setPredictShipping(true);
     setShippingCost(0);
+    setAutoPredict(true);
   };
 
   const addProduct = () => {
@@ -373,14 +375,26 @@ const Index = () => {
         </table>
       </div>
 
-      <Button onClick={handlePredict} disabled={isLoading}>
-        {isLoading ? (
-          <Spinner className="mr-2 h-4 w-4" />
-        ) : (
-          <Sparkles className="mr-2 h-4 w-4" />
-        )}
-        Predict
-      </Button>
+      <div className="flex items-center space-x-4">
+        <Button onClick={handlePredict} disabled={isLoading || autoPredict}>
+          {isLoading ? (
+            <Spinner className="mr-2 h-4 w-4" />
+          ) : (
+            <Sparkles className="mr-2 h-4 w-4" />
+          )}
+          Predict
+        </Button>
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="autoPredict"
+            checked={autoPredict}
+            onCheckedChange={setAutoPredict}
+          />
+          <label htmlFor="autoPredict" className="text-sm font-medium text-gray-700">
+            Auto
+          </label>
+        </div>
+      </div>
 
       <Dialog open={showModal} onOpenChange={setShowModal}>
         <DialogContent>
