@@ -67,52 +67,54 @@ const Index = () => {
               className="w-full"
             />
           </div>
-          <div>
+          <div className="flex flex-col">
             <label htmlFor="customer" className="block text-sm font-medium text-gray-700 mb-1">Customer:</label>
-            <Popover open={open} onOpenChange={setOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  role="combobox"
-                  aria-expanded={open}
-                  className="w-full justify-between"
-                >
-                  {customer
-                    ? customers.find((c) => c.value === customer)?.label
-                    : "Select customer..."}
-                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-[200px] p-0">
-                <Command>
-                  <CommandInput placeholder="Search customer..." />
-                  <CommandEmpty>No customer found.</CommandEmpty>
-                  <CommandGroup>
-                    {customers.map((c) => (
-                      <CommandItem
-                        key={c.value}
-                        onSelect={(currentValue) => {
-                          setCustomer(currentValue === customer ? "" : currentValue);
-                          setOpen(false);
-                        }}
-                      >
-                        {c.label}
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                </Command>
-              </PopoverContent>
-            </Popover>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="monitorDataLayer"
-              checked={monitorDataLayer}
-              onCheckedChange={setMonitorDataLayer}
-            />
-            <label htmlFor="monitorDataLayer" className="text-sm font-medium text-gray-700">
-              Monitor DataLayer
-            </label>
+            <div className="flex items-center space-x-2">
+              <Popover open={open} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={open}
+                    className="w-full justify-between"
+                  >
+                    {customer
+                      ? customers.find((c) => c.value === customer)?.label
+                      : "Select customer..."}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[200px] p-0">
+                  <Command>
+                    <CommandInput placeholder="Search customer..." />
+                    <CommandEmpty>No customer found.</CommandEmpty>
+                    <CommandGroup>
+                      {customers.map((c) => (
+                        <CommandItem
+                          key={c.value}
+                          onSelect={(currentValue) => {
+                            setCustomer(currentValue === customer ? "" : currentValue);
+                            setOpen(false);
+                          }}
+                        >
+                          {c.label}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="monitorDataLayer"
+                  checked={monitorDataLayer}
+                  onCheckedChange={setMonitorDataLayer}
+                />
+                <label htmlFor="monitorDataLayer" className="text-sm font-medium text-gray-700">
+                  Monitor DataLayer
+                </label>
+              </div>
+            </div>
           </div>
         </div>
         <Button onClick={handleReset} variant="outline" className="w-full">Reset</Button>
