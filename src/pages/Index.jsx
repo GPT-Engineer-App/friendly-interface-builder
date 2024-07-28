@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import { FlashingValueDisplay } from "@/components/ui/flashing-value-display";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, Trash2, RotateCcw, Sparkles, CalendarIcon, Clock, X, CheckIcon, CaretSortIcon } from "lucide-react";
+import { Plus, Trash2, RotateCcw, Sparkles, CalendarIcon, Clock, X, CheckIcon } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
@@ -217,7 +217,7 @@ const Index = () => {
             {value
               ? options.find((option) => option.value === value)?.label
               : "Select..."}
-            <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            <Sparkles className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[200px] p-0">
