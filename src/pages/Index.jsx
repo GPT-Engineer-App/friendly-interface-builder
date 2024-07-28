@@ -14,6 +14,8 @@ import { cn } from "@/lib/utils";
 import { Spinner } from "@/components/ui/spinner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import JsonView from 'react18-json-view'
+import 'react18-json-view/src/style.css'
 
 const customers = [
   { value: "customer1", label: "Customer 1" },
@@ -202,7 +204,14 @@ const Index = () => {
   return (
     <div className="container mx-auto p-6 space-y-6">
 
+      <h1 className="text-xl font-semibold mb-4">Headw.ai Prediction Debugger</h1>
+
       <div className="flex items-center space-x-2">
+
+      <Button variant="outline" onClick={handleClearHeadwaiId}>
+          <X className="mr-2 h-4 w-4" />
+          { headwaiId }
+        </Button>
 
         <div>
           <TooltipProvider>
@@ -222,11 +231,6 @@ const Index = () => {
             </Tooltip>
           </TooltipProvider>
         </div>
-
-        <Button variant="outline" onClick={handleClearHeadwaiId}>
-          <X className="mr-2 h-4 w-4" />
-          { headwaiId }
-        </Button>
 
       </div>
 
@@ -600,6 +604,17 @@ const Index = () => {
             </tbody>
           </table>
         </div>
+        <div className="w-64 bg-white">
+          <table className="w-full">
+            <tbody>
+              <tr className="bg-gray-50">
+                <td className="p-3 text-sm font-medium">Response Time</td>
+                <td className="p-3 text-sm text-right">589ms</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <JsonView src={ tableRows }/>
       </div>
       <Dialog open={showModal} onOpenChange={setShowModal}>
         <DialogContent>
