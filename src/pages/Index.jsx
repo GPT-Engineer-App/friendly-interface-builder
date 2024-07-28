@@ -33,7 +33,6 @@ const products = [
 const Index = () => {
   const [endpoint, setEndpoint] = useState("hw-red-panda-123456");
   const [customer, setCustomer] = useState("");
-  const [open, setOpen] = useState(false);
   const [monitorDataLayer, setMonitorDataLayer] = useState(true);
   const [tableRows, setTableRows] = useState([
     { sku: "SKU-4577-736", product: "Sneakers", qty: 1, price: 123456.78, discount: 4568.90 }
@@ -49,7 +48,7 @@ const Index = () => {
   const [paymentCost, setPaymentCost] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [autoPredict, setAutoPredict] = useState(true);
+  const [autoPredict, setAutoPredict] = useState(false);
 
   const [gp2plus, setGp2plus] = useState(0);
 
