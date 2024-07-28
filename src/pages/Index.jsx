@@ -39,7 +39,7 @@ const Index = () => {
     setTableRows([{ sku: "", product: "", qty: 0, price: 0, discount: 0 }]);
   };
 
-  const addRow = () => {
+  const addProduct = () => {
     setTableRows([...tableRows, { sku: "", product: "", qty: 0, price: 0, discount: 0 }]);
   };
 
@@ -205,8 +205,8 @@ const Index = () => {
             ))}
           </TableBody>
         </Table>
-        <Button onClick={addRow} className="mt-4">
-          <Plus className="h-4 w-4 mr-2" /> Add Row
+        <Button onClick={addProduct} className="mt-4">
+          <Plus className="h-4 w-4 mr-2" /> Add Product
         </Button>
       </div>
 
