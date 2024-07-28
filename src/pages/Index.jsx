@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { FlashingValueDisplay } from "@/components/ui/flashing-value-display";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Trash2, RotateCcw, Sparkles, CalendarIcon, Clock } from "lucide-react";
+import { Plus, Trash2, RotateCcw, Sparkles, CalendarIcon, Clock, X } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
@@ -49,7 +49,7 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [autoPredict, setAutoPredict] = useState(true);
-  
+
   const [gp2plus, setGp2plus] = useState(0);
 
   const handleReset = () => {
@@ -113,8 +113,10 @@ const Index = () => {
 
   return (
     <div className="container mx-auto p-6 space-y-6">
-      <div className="relative">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+      <div className="flex items-center space-x-2">
+
+        <div>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -132,19 +134,93 @@ const Index = () => {
             </Tooltip>
           </TooltipProvider>
         </div>
+
+        <Button variant="outline">
+          <X className="mr-2 h-4 w-4" />
+          hw-red-panda-123456
+        </Button>
+
       </div>
 
-      <div className="bg-white p-6 rounded-lg shadow relative">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-          <div>
-            <label htmlFor="endpoint" className="block text-sm font-medium text-gray-700 mb-1">Endpoint:</label>
-            <Input
-              id="endpoint"
-              value={endpoint}
-              onChange={(e) => setEndpoint(e.target.value)}
-              className="w-full"
+      <div className="bg-white p-6 rounded-lg shadow">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold">Basket</h2>
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="monitorDataLayer"
+              checked={monitorDataLayer}
+              onCheckedChange={setMonitorDataLayer}
             />
+            <label htmlFor="monitorDataLayer" className="text-sm font-medium text-gray-700">
+              Mirror DataLayer
+            </label>
           </div>
+        </div>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[40%]">Product</TableHead>
+              <TableHead className="w-[20%]">Qty</TableHead>
+              <TableHead className="w-[20%]">Price</TableHead>
+              <TableHead className="w-[20%]">Discount</TableHead>
+              <TableHead></TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {tableRows.map((row, index) => (
+              <TableRow key={index}>
+                <TableCell className="w-[40%]">
+                  <Select>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="SKU-123456789" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="airmee">AIRMEE</SelectItem>
+                      <SelectItem value="default">DEFAULT</SelectItem>
+                      <SelectItem value="klarna">KLARNA</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </TableCell>
+                <TableCell className="w-[20%]">
+                  <Input
+                    type="number"
+                    value={row.qty}
+                    onChange={(e) => updateRow(index, 'qty', parseInt(e.target.value))}
+                  />
+                </TableCell>
+                <TableCell className="w-[20%]">
+                  <Input
+                    type="number"
+                    value={row.price}
+                    onChange={(e) => updateRow(index, 'price', parseFloat(e.target.value))}
+                    step="0.1"
+                  />
+                </TableCell>
+                <TableCell className="w-[20%]">
+                  <Input
+                    type="number"
+                    value={row.discount}
+                    onChange={(e) => updateRow(index, 'discount', parseFloat(e.target.value))}
+                    step="0.1"
+                  />
+                </TableCell>
+                <TableCell>
+                  <Button onClick={() => removeRow(index)} variant="ghost" size="icon">
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        <Button onClick={addProduct} className="mt-4" variant="secondary">
+          <Plus className="h-4 w-4 mr-2" /> Add Product
+        </Button>
+      </div>
+
+      <div className="w-full mx-auto p-6 bg-white shadow-md rounded-lg">
+        <h2 className="text-lg font-semibold mb-4">Order Details</h2>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
           <div className="flex flex-col">
             <label htmlFor="customer" className="block text-sm font-medium text-gray-700 mb-1">Customer:</label>
             <Input
@@ -155,7 +231,7 @@ const Index = () => {
             />
           </div>
           <div className="flex flex-col">
-            <label htmlFor="datetime" className="block text-sm font-medium text-gray-700 mb-1">Order Date:</label>
+            <label htmlFor="datetime" className="block text-sm font-medium text-gray-700 mb-1"> Date:</label>
             {showOrderDate ? (
               <div className="flex items-center space-x-2">
                 <Checkbox
@@ -204,85 +280,6 @@ const Index = () => {
             )}
           </div>
         </div>
-      </div>
-
-      <div className="bg-white p-6 rounded-lg shadow">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold">Basket</h2>
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="monitorDataLayer"
-              checked={monitorDataLayer}
-              onCheckedChange={setMonitorDataLayer}
-            />
-            <label htmlFor="monitorDataLayer" className="text-sm font-medium text-gray-700">
-              Monitor DataLayer
-            </label>
-          </div>
-        </div>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[40%]">Product</TableHead>
-              <TableHead className="w-[20%]">Qty</TableHead>
-              <TableHead className="w-[20%]">Price</TableHead>
-              <TableHead className="w-[20%]">Discount</TableHead>
-              <TableHead></TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {tableRows.map((row, index) => (
-              <TableRow key={index}>
-                <TableCell className="w-[40%]">
-                  <Select>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="AIRMEE" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="airmee">AIRMEE</SelectItem>
-                      <SelectItem value="default">DEFAULT</SelectItem>
-                      <SelectItem value="klarna">KLARNA</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </TableCell>
-                <TableCell className="w-[20%]">
-                  <Input
-                    type="number"
-                    value={row.qty}
-                    onChange={(e) => updateRow(index, 'qty', parseInt(e.target.value))}
-                  />
-                </TableCell>
-                <TableCell className="w-[20%]">
-                  <Input
-                    type="number"
-                    value={row.price}
-                    onChange={(e) => updateRow(index, 'price', parseFloat(e.target.value))}
-                    step="0.1"
-                  />
-                </TableCell>
-                <TableCell className="w-[20%]">
-                  <Input
-                    type="number"
-                    value={row.discount}
-                    onChange={(e) => updateRow(index, 'discount', parseFloat(e.target.value))}
-                    step="0.1"
-                  />
-                </TableCell>
-                <TableCell>
-                  <Button onClick={() => removeRow(index)} variant="ghost" size="icon">
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        <Button onClick={addProduct} className="mt-4" variant="secondary">
-          <Plus className="h-4 w-4 mr-2" /> Add Product
-        </Button>
-      </div>
-
-      <div className="w-full  mx-auto p-4 bg-white shadow-md rounded-lg">
         <table className="w-full border-collapse">
           <thead>
             <tr className="border-b">
@@ -368,7 +365,7 @@ const Index = () => {
                 ) : (
                   <Input
                     type="number"
-                    value={handlingCost}
+                    value={paymentCost}
                     onChange={(e) => setPaymentCost(parseFloat(e.target.value))}
                     step="0.01"
                     className="w-full"
@@ -465,62 +462,57 @@ const Index = () => {
       </div>
 
       <div className="flex space-x-4">
-      <div className="w-64 bg-white">
-        <table className="w-full">
-          <tbody>
-            <tr className="bg-gray-50">
-              <td className="p-3 text-sm font-medium">Cogs</td>
-              <td className="p-3 text-sm text-right">123</td>
-            </tr>
-            <tr>
-              <td className="p-3 text-sm font-medium">Shipping</td>
-              <td className="p-3 text-sm text-right">123</td>
-            </tr>
-            <tr className="bg-gray-50">
-              <td className="p-3 text-sm font-medium">Handling</td>
-              <td className="p-3 text-sm text-right">123</td>
-            </tr>
-            <tr>
-              <td className="p-3 text-sm font-medium">Payment</td>
-              <td className="p-3 text-sm text-right">123</td>
-            </tr>
-          </tbody>
-        </table>
+        <div className="w-64 bg-white">
+          <table className="w-full">
+            <tbody>
+              <tr className="bg-gray-50">
+                <td className="p-3 text-sm font-medium">Cogs</td>
+                <td className="p-3 text-sm text-right">123</td>
+              </tr>
+              <tr>
+                <td className="p-3 text-sm font-medium">Shipping</td>
+                <td className="p-3 text-sm text-right">123</td>
+              </tr>
+              <tr className="bg-gray-50">
+                <td className="p-3 text-sm font-medium">Handling</td>
+                <td className="p-3 text-sm text-right">123</td>
+              </tr>
+              <tr>
+                <td className="p-3 text-sm font-medium">Payment</td>
+                <td className="p-3 text-sm text-right">123</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div className="w-64 bg-white">
+          <table className="w-full">
+            <tbody>
+              <tr className="bg-gray-50">
+                <td className="p-3 text-sm font-medium">GP1</td>
+                <td className="p-3 text-sm text-right">123</td>
+              </tr>
+              <tr>
+                <td className="p-3 text-sm font-medium">GM1</td>
+                <td className="p-3 text-sm text-right">10%</td>
+              </tr>
+              <tr className="bg-gray-50">
+                <td className="p-3 text-sm font-medium">GP2</td>
+                <td className="p-3 text-sm text-right">123</td>
+              </tr>
+              <tr>
+                <td className="p-3 text-sm font-medium">GM2</td>
+                <td className="p-3 text-sm text-right">10%</td>
+              </tr>
+              <tr className="bg-gray-50">
+                <td className="p-3 text-sm font-medium">GP2+</td>
+                <td className="p-3 text-sm text-right">
+                  <FlashingValueDisplay value={gp2plus} formatValue={(v) => `$${v.toFixed(2)}`} />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-      <div className="w-64 bg-white">
-        <table className="w-full">
-          <tbody>
-            <tr className="bg-gray-50">
-              <td className="p-3 text-sm font-medium">GP1</td>
-              <td className="p-3 text-sm text-right">123</td>
-            </tr>
-            <tr>
-              <td className="p-3 text-sm font-medium">GM1</td>
-              <td className="p-3 text-sm text-right">10%</td>
-            </tr>
-            <tr className="bg-gray-50">
-              <td className="p-3 text-sm font-medium">GP2</td>
-              <td className="p-3 text-sm text-right">123</td>
-            </tr>
-            <tr>
-              <td className="p-3 text-sm font-medium">GM2</td>
-              <td className="p-3 text-sm text-right">10%</td>
-            </tr>
-            <tr className="bg-gray-50">
-              <td className="p-3 text-sm font-medium">GP2+</td>
-              <td className="p-3 text-sm text-right">
-                <FlashingValueDisplay value={gp2plus} formatValue={(v) => `$${v.toFixed(2)}`}/>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-
-      </div>
-
-      
-
       <Dialog open={showModal} onOpenChange={setShowModal}>
         <DialogContent>
           <DialogHeader>
