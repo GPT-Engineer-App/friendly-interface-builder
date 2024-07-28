@@ -68,6 +68,10 @@ const Index = () => {
     setAutoPredict(true);
   };
 
+  const handleClearHeadwaiId = () => {
+    setHeadwaiId("");
+  }
+
   const addProduct = () => {
     setTableRows([...tableRows, { sku: "", product: "", qty: 0, price: 0, discount: 0 }]);
   };
@@ -170,7 +174,7 @@ const Index = () => {
           </TooltipProvider>
         </div>
 
-        <Button variant="outline">
+        <Button variant="outline" onClick="handleClearHeadwaiId">
           <X className="mr-2 h-4 w-4" />
           { headwaiId }
         </Button>
