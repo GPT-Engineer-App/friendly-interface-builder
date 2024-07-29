@@ -33,14 +33,6 @@ const products = [
   // Add more products as needed
 ];
 
-const frameworks = [
-  { value: "next.js", label: "Next.js" },
-  { value: "sveltekit", label: "SvelteKit" },
-  { value: "nuxt.js", label: "Nuxt.js" },
-  { value: "remix", label: "Remix" },
-  { value: "astro", label: "Astro" },
-];
-
 const typeOptions = [
   { value: "airmee", label: "AIRMEE" },
   { value: "default", label: "DEFAULT" },
@@ -48,8 +40,8 @@ const typeOptions = [
 ];
 
 const Index = () => {
-  const [headwaiId, setHeadwaiId] = useState("");
-  const [isHeadwaiIdSet, setIsHeadwaiIdSet] = useState(false);
+  const [endpoint, setEndpoint] = useState("");
+  const [isEndpointSet, setIsEndpointSet] = useState(false);
   const [customer, setCustomer] = useState("");
   const [monitorDataLayer, setMonitorDataLayer] = useState(true);
   const [tableRows, setTableRows] = useState([
@@ -75,10 +67,10 @@ const Index = () => {
   const [gp2plus, setGp2plus] = useState(0);
 
   useEffect(() => {
-    const storedHeadwaiId = localStorage.getItem('headwaiId');
-    if (storedHeadwaiId) {
-      setHeadwaiId(storedHeadwaiId);
-      setIsHeadwaiIdSet(true);
+    const storedEndpoint = localStorage.getItem('endpoint');
+    if (storedEndpoint) {
+      setEndpoint(storedEndpoint);
+      setIsEndpointSet(true);
     }
   }, []);
 
@@ -102,10 +94,10 @@ const Index = () => {
     setOtherDiscountsType("airmee");
   };
 
-  const handleClearHeadwaiId = () => {
-    setHeadwaiId("");
-    setIsHeadwaiIdSet(false);
-    localStorage.removeItem('headwaiId');
+  const handleClearEndpoint = () => {
+    setEndpoint("");
+    setIsEndpointSet(false);
+    localStorage.removeItem('endpoint');
   }
 
   const addProduct = () => {
@@ -140,10 +132,10 @@ const Index = () => {
   const handlePredict = async () => {
     setIsLoading(true);
     const requestData = {
-      endpoint: headwaiId,
+      endpoint: endpoint,
       customer,
       monitorDataLayer,
-      products: tableRows,
+      lines: tableRows,
       orderDate: showOrderDate ? new Date().toISOString() : `${format(date, "yyyy-MM-dd")}T${time}:00`,
       shipping: {
         cost: predictShippingCost ? null : shippingCost,
@@ -166,13 +158,13 @@ const Index = () => {
     };
 
     try {
-      const response = await fetch('https://webhook.site/2fa325f7-e3f7-41f2-a502-cc1c75c8d899', {
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(requestData),
-        mode: 'no-cors' // Add this line to use 'no-cors' mode
+        mode: 'no-cors'
       });
 
       // Since 'no-cors' mode returns an opaque response, we can't check response.ok
@@ -192,83 +184,29 @@ const Index = () => {
     setGp2plus(randomGp2plus);
   }
 
-  const handleSetHeadwaiId = () => {
-    if (headwaiId.trim()) {
-      localStorage.setItem('headwaiId', headwaiId);
-      setIsHeadwaiIdSet(true);
-      toast.success("Headw.ai Id set successfully");
-    } else {
-      toast.error("Please enter a valid Headw.ai Id");
+  const handleSetEndpoint = () => {
+    if (endpoint.trim()) {
+      localStorage.setItem('endpoint', endpoint);
+      setIsEndpointSet(true);
     }
   };
 
-  const SearchableSelect = ({ value, onChange, options }) => {
-    const [open, setOpen] = useState(false);
-
-    return (
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            role="combobox"
-            aria-expanded={open}
-            className="w-full justify-between"
-          >
-            {value
-              ? options.find((option) => option.value === value)?.label
-              : "Select..."}
-            <Sparkles className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-[200px] p-0">
-          <Command>
-            <CommandInput placeholder="Search..." className="h-9" />
-            <CommandEmpty>No option found.</CommandEmpty>
-            <CommandGroup>
-              {options.map((option) => (
-                <CommandItem
-                  key={option.value}
-                  onSelect={() => {
-                    onChange(option.value);
-                    setOpen(false);
-                  }}
-                >
-                  {option.label}
-                  <CheckIcon
-                    className={cn(
-                      "ml-auto h-4 w-4",
-                      value === option.value ? "opacity-100" : "opacity-0"
-                    )}
-                  />
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </Command>
-        </PopoverContent>
-      </Popover>
-    );
-  };
-
-  if (!isHeadwaiIdSet) {
+  if (!isEndpointSet) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
         <div className="w-full max-w-md p-8 space-y-4 bg-white rounded-lg shadow-md">
-          <h2 className="text-2xl font-bold text-center text-gray-800">Enter Headw.ai Id</h2>
+          <h2 className="text-2xl font-bold text-center text-gray-800">Enter Headw.ai Endpoint</h2>
           <div className="space-y-2">
-            <label htmlFor="headwaiId" className="text-sm font-medium text-gray-700">
-              Headw.ai Id:
-            </label>
             <Input
-              id="headwaiId"
+              id="endpoint"
               type="text"
-              placeholder="Enter your Headw.ai Id"
-              value={headwaiId}
-              onChange={(e) => setHeadwaiId(e.target.value)}
+              value={endpoint}
+              onChange={(e) => setEndpoint(e.target.value)}
             />
           </div>
           <Button
             className="w-full"
-            onClick={handleSetHeadwaiId}
+            onClick={handleSetEndpoint}
           >
             Set
           </Button>
@@ -284,9 +222,9 @@ const Index = () => {
 
       <div className="flex items-center space-x-2">
 
-      <Button variant="outline" onClick={handleClearHeadwaiId}>
+      <Button variant="outline" onClick={handleClearEndpoint}>
           <X className="mr-2 h-4 w-4" />
-          { headwaiId }
+          { endpoint }
         </Button>
 
         <div>
@@ -341,7 +279,8 @@ const Index = () => {
                   <SearchableSelect
                     value={row.sku}
                     onChange={(value) => updateRow(index, 'sku', value)}
-                    options={products.map(product => ({ value: product.sku, label: `${product.name} (${product.sku})` }))}
+                    items={products.map(product => ({ value: product.sku, label: `${product.name} (${product.sku})` }))}
+                    className="w-full"
                   />
                 </TableCell>
                 <TableCell className="w-[20%]">
@@ -545,28 +484,32 @@ const Index = () => {
                 <SearchableSelect
                   value={shippingType}
                   onChange={setShippingType}
-                  options={typeOptions}
+                  items={typeOptions}
+                  className="w-full"
                 />
               </td>
               <td className="p-2">
                 <SearchableSelect
                   value={handlingType}
                   onChange={setHandlingType}
-                  options={typeOptions}
+                  items={typeOptions}
+                  className="w-full"
                 />
               </td>
               <td className="p-2">
                 <SearchableSelect
                   value={paymentType}
                   onChange={setPaymentType}
-                  options={typeOptions}
+                  items={typeOptions}
+                  className="w-full"
                 />
               </td>
               <td className="p-2">
                 <SearchableSelect
                   value={otherDiscountsType}
                   onChange={setOtherDiscountsType}
-                  options={typeOptions}
+                  items={typeOptions}
+                  className="w-full"
                 />
               </td>
             </tr>
@@ -583,7 +526,7 @@ const Index = () => {
           )}
           Predict
         </Button>
-        <div className="flex items-center space-x-2">
+        {/* <div className="flex items-center space-x-2">
           <Checkbox
             id="autoPredict"
             checked={autoPredict}
@@ -592,7 +535,7 @@ const Index = () => {
           <label htmlFor="autoPredict" className="text-sm font-medium text-gray-700">
             Auto
           </label>
-        </div>
+        </div> */}
         {/* <Button onClick={handleGp2}>Randomize GP2+</Button> */}
       </div>
 
