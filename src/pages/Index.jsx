@@ -3,6 +3,18 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { SearchableSelect } from "@/components/ui/searchable-select";
+
+const countries = [
+  { value: "SE", label: "Sweden" },
+  { value: "NO", label: "Norway" },
+  { value: "DK", label: "Denmark" },
+  { value: "FI", label: "Finland" },
+  { value: "US", label: "United States" },
+  { value: "GB", label: "United Kingdom" },
+  { value: "DE", label: "Germany" },
+  { value: "FR", label: "France" },
+  // Add more countries as needed
+];
 import { FlashingValueDisplay } from "@/components/ui/flashing-value-display";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Plus, Trash2, RotateCcw, Sparkles, CalendarIcon, Clock, X, CheckIcon } from "lucide-react";
@@ -46,7 +58,7 @@ const Index = () => {
   const [customerEmail, setCustomerEmail] = useState("");
   const [customerCity, setCustomerCity] = useState("");
   const [customerZip, setCustomerZip] = useState("");
-  const [customerCountryCode, setCustomerCountryCode] = useState("");
+  const [customerCountryCode, setCustomerCountryCode] = useState("SE");
   const [monitorDataLayer, setMonitorDataLayer] = useState(true);
   const [tableRows, setTableRows] = useState([
     { sku: "SKU-4577-736", product: "Sneakers", qty: 1, price: 123456.78, discount: 4568.90 }
@@ -375,11 +387,12 @@ const Index = () => {
             />
           </div>
           <div className="flex flex-col">
-            <label htmlFor="customerCountryCode" className="block text-sm font-medium text-gray-700 mb-1">Country Code:</label>
-            <Input
+            <label htmlFor="customerCountryCode" className="block text-sm font-medium text-gray-700 mb-1">Country:</label>
+            <SearchableSelect
               id="customerCountryCode"
               value={customerCountryCode}
-              onChange={(e) => setCustomerCountryCode(e.target.value)}
+              onChange={setCustomerCountryCode}
+              items={countries}
               className="w-full"
             />
           </div>
