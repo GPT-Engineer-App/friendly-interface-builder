@@ -43,6 +43,10 @@ const Index = () => {
   const [endpoint, setEndpoint] = useState("");
   const [isEndpointSet, setIsEndpointSet] = useState(false);
   const [customer, setCustomer] = useState("");
+  const [customerEmail, setCustomerEmail] = useState("");
+  const [customerCity, setCustomerCity] = useState("");
+  const [customerZip, setCustomerZip] = useState("");
+  const [customerCountryCode, setCustomerCountryCode] = useState("");
   const [monitorDataLayer, setMonitorDataLayer] = useState(true);
   const [tableRows, setTableRows] = useState([
     { sku: "SKU-4577-736", product: "Sneakers", qty: 1, price: 123456.78, discount: 4568.90 }
@@ -76,6 +80,10 @@ const Index = () => {
 
   const handleReset = () => {
     setCustomer("");
+    setCustomerEmail("");
+    setCustomerCity("");
+    setCustomerZip("");
+    setCustomerCountryCode("");
     setMonitorDataLayer(true);
     setTableRows([{ sku: "", product: "", qty: 0, price: 0, discount: 0 }]);
     setDate(new Date());
@@ -133,7 +141,13 @@ const Index = () => {
     setIsLoading(true);
     const requestData = {
       endpoint: endpoint,
-      customer,
+      customer: {
+        id: customer,
+        email: customerEmail,
+        city: customerCity,
+        zip: customerZip,
+        country_code: customerCountryCode
+      },
       monitorDataLayer,
       lines: tableRows,
       orderDate: showOrderDate ? new Date().toISOString() : `${format(date, "yyyy-MM-dd")}T${time}:00`,
@@ -322,14 +336,53 @@ const Index = () => {
 
       <div className="w-full mx-auto p-6 bg-white shadow-md rounded-lg mb-6">
         <h2 className="text-lg font-semibold mb-4">Customer</h2>
-        <div className="flex flex-col">
-          <label htmlFor="customer" className="block text-sm font-medium text-gray-700 mb-1">Customer:</label>
-          <Input
-            id="customer"
-            value={customer}
-            onChange={(e) => setCustomer(e.target.value)}
-            className="w-full"
-          />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="flex flex-col">
+            <label htmlFor="customer" className="block text-sm font-medium text-gray-700 mb-1">Customer:</label>
+            <Input
+              id="customer"
+              value={customer}
+              onChange={(e) => setCustomer(e.target.value)}
+              className="w-full"
+            />
+          </div>
+          <div className="flex flex-col">
+            <label htmlFor="customerEmail" className="block text-sm font-medium text-gray-700 mb-1">Email:</label>
+            <Input
+              id="customerEmail"
+              type="email"
+              value={customerEmail}
+              onChange={(e) => setCustomerEmail(e.target.value)}
+              className="w-full"
+            />
+          </div>
+          <div className="flex flex-col">
+            <label htmlFor="customerCity" className="block text-sm font-medium text-gray-700 mb-1">City:</label>
+            <Input
+              id="customerCity"
+              value={customerCity}
+              onChange={(e) => setCustomerCity(e.target.value)}
+              className="w-full"
+            />
+          </div>
+          <div className="flex flex-col">
+            <label htmlFor="customerZip" className="block text-sm font-medium text-gray-700 mb-1">ZIP:</label>
+            <Input
+              id="customerZip"
+              value={customerZip}
+              onChange={(e) => setCustomerZip(e.target.value)}
+              className="w-full"
+            />
+          </div>
+          <div className="flex flex-col">
+            <label htmlFor="customerCountryCode" className="block text-sm font-medium text-gray-700 mb-1">Country Code:</label>
+            <Input
+              id="customerCountryCode"
+              value={customerCountryCode}
+              onChange={(e) => setCustomerCountryCode(e.target.value)}
+              className="w-full"
+            />
+          </div>
         </div>
       </div>
 
