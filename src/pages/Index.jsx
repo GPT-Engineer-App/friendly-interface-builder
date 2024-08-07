@@ -3,18 +3,14 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { SearchableSelect } from "@/components/ui/searchable-select";
+import { useQuery } from "@tanstack/react-query";
+import { FlashingValueDisplay } from "@/components/ui/flashing-value-display";
 
 const countries = [
   { value: "SE", label: "Sweden" },
   { value: "NO", label: "Norway" },
-  { value: "DK", label: "Denmark" },
   { value: "FI", label: "Finland" },
-  { value: "US", label: "United States" },
-  { value: "GB", label: "United Kingdom" },
-  { value: "DE", label: "Germany" },
-  { value: "FR", label: "France" },
 ];
-import { FlashingValueDisplay } from "@/components/ui/flashing-value-display";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Plus, Trash2, RotateCcw, Sparkles, CalendarIcon, Clock, X, CheckIcon } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -36,23 +32,6 @@ const customers = [
   // Add more customers as needed
 ];
 
-const markets = [
-  { value: "market1", label: "Market 1" },
-  { value: "market2", label: "Market 2" },
-  { value: "market3", label: "Market 3" },
-];
-
-const properties = [
-  { value: "property1", label: "Property 1" },
-  { value: "property2", label: "Property 2" },
-  { value: "property3", label: "Property 3" },
-];
-
-const storeTypes = [
-  { value: "type1", label: "Type 1" },
-  { value: "type2", label: "Type 2" },
-  { value: "type3", label: "Type 3" },
-];
 
 const products = [
   { sku: "SKU-4577-736", name: "Sneakers" },
@@ -73,9 +52,31 @@ const Index = () => {
   const [isEndpointSet, setIsEndpointSet] = useState(false);
   const [customer, setCustomer] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
+
+  const { data: options, isLoading: isLoadingOptions, error: optionsError } = useQuery({
+    queryKey: ['debuggerOptions', endpoint],
+    queryFn: async () => {
+      if (!endpoint) return null;
+      const response = await fetch(`${endpoint}/debugger/options`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      return {
+        store_market_options: data.store_market_options || [],
+        store_property_options: data.store_property_options || [],
+        store_type_options: data.store_type_options || []
+      };
+    },
+    enabled: !!endpoint && isEndpointSet,
+  });
+
+  const markets = options?.store_market_options || [];
+  const properties = options?.store_property_options || [];
+  const storeTypes = options?.store_type_options || [];
   const [customerCity, setCustomerCity] = useState("");
   const [customerZip, setCustomerZip] = useState("");
-  const [customerCountryCode, setCustomerCountryCode] = useState("SE");
+  const [customerCountryCode, setCustomerCountryCode] = useState(countries[0]?.value || "SE");
   const [monitorDataLayer, setMonitorDataLayer] = useState(true);
   const [tableRows, setTableRows] = useState([
     { sku: "SKU-4577-736", product: "Sneakers", qty: 1, price: 123456.78, discount: 4568.90 }
@@ -92,13 +93,13 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [autoPredict, setAutoPredict] = useState(false);
-  const [shippingType, setShippingType] = useState("airmee");
-  const [handlingType, setHandlingType] = useState("airmee");
-  const [paymentType, setPaymentType] = useState("airmee");
-  const [otherDiscountsType, setOtherDiscountsType] = useState("airmee");
-  const [market, setMarket] = useState("");
-  const [property, setProperty] = useState("");
-  const [storeType, setStoreType] = useState("");
+  const [shippingType, setShippingType] = useState(typeOptions[0]?.value || "airmee");
+  const [handlingType, setHandlingType] = useState(typeOptions[0]?.value || "airmee");
+  const [paymentType, setPaymentType] = useState(typeOptions[0]?.value || "airmee");
+  const [otherDiscountsType, setOtherDiscountsType] = useState(typeOptions[0]?.value || "airmee");
+  const [market, setMarket] = useState(markets[0]?.value || "");
+  const [property, setProperty] = useState(properties[0]?.value || "");
+  const [storeType, setStoreType] = useState(storeTypes[0]?.value || "");
 
   const [gp2plus, setGp2plus] = useState(0);
 
@@ -261,6 +262,34 @@ const Index = () => {
     );
   }
 
+  if (isLoadingOptions) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+        <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center">
+          <Spinner className="w-12 h-12 mb-4" />
+          <p className="text-lg font-semibold">Loading options...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (optionsError) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+        <div className="w-full max-w-md p-8 space-y-4 bg-white rounded-lg shadow-md">
+          <h2 className="text-2xl font-bold text-center text-red-600">Error Loading Options</h2>
+          <p className="text-center text-gray-700">{optionsError.message}</p>
+          <Button
+            className="w-full"
+            onClick={() => window.location.reload()}
+          >
+            Retry
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto p-6 space-y-6">
 
@@ -303,7 +332,7 @@ const Index = () => {
               id="market"
               value={market}
               onChange={setMarket}
-              items={markets}
+              items={markets.map(m => ({ value: m, label: m }))}
               className="w-full"
             />
           </div>
@@ -313,7 +342,7 @@ const Index = () => {
               id="property"
               value={property}
               onChange={setProperty}
-              items={properties}
+              items={properties.map(p => ({ value: p, label: p }))}
               className="w-full"
             />
           </div>
@@ -323,7 +352,7 @@ const Index = () => {
               id="storeType"
               value={storeType}
               onChange={setStoreType}
-              items={storeTypes}
+              items={storeTypes.map(t => ({ value: t, label: t }))}
               className="w-full"
             />
           </div>
