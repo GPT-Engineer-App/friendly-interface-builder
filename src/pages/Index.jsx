@@ -80,6 +80,11 @@ const Index = () => {
       return response.json();
     },
     enabled: !!endpoint && isEndpointSet,
+    onSuccess: (data) => {
+      if (data?.store_market_options?.length > 0) {
+        setMarket(data.store_market_options[0].id);
+      }
+    },
   });
 
   const markets = options?.store_market_options?.map(option => ({
@@ -109,7 +114,7 @@ const Index = () => {
   const [handlingType, setHandlingType] = useState("airmee");
   const [paymentType, setPaymentType] = useState("airmee");
   const [otherDiscountsType, setOtherDiscountsType] = useState("airmee");
-  const [market, setMarket] = useState("");
+  const [market, setMarket] = useState(null);
   const [property, setProperty] = useState("");
   const [storeType, setStoreType] = useState("");
 
