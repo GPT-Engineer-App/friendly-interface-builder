@@ -24,6 +24,7 @@ import { toast } from "sonner";
 import JsonView from 'react18-json-view'
 import 'react18-json-view/src/style.css'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command"
+import { Spinner } from "@/components/ui/spinner";
 
 const customers = [
   { value: "customer1", label: "Customer 1" },
@@ -262,6 +263,34 @@ const Index = () => {
     );
   }
 
+  if (isLoadingOptions) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+        <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center">
+          <Spinner className="w-12 h-12 mb-4" />
+          <p className="text-lg font-semibold">Loading options...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (optionsError) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+        <div className="w-full max-w-md p-8 space-y-4 bg-white rounded-lg shadow-md">
+          <h2 className="text-2xl font-bold text-center text-red-600">Error Loading Options</h2>
+          <p className="text-center text-gray-700">{optionsError.message}</p>
+          <Button
+            className="w-full"
+            onClick={() => window.location.reload()}
+          >
+            Retry
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto p-6 space-y-6">
 
@@ -300,19 +329,13 @@ const Index = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="flex flex-col">
             <label htmlFor="market" className="block text-sm font-medium text-gray-700 mb-1">Market:</label>
-            {isLoadingOptions ? (
-              <div className="text-sm text-gray-500">Loading markets...</div>
-            ) : optionsError ? (
-              <div className="text-sm text-red-500">Error loading markets</div>
-            ) : (
-              <SearchableSelect
-                id="market"
-                value={market}
-                onChange={setMarket}
-                items={markets.map(m => ({ value: m, label: m }))}
-                className="w-full"
-              />
-            )}
+            <SearchableSelect
+              id="market"
+              value={market}
+              onChange={setMarket}
+              items={markets.map(m => ({ value: m, label: m }))}
+              className="w-full"
+            />
           </div>
           <div className="flex flex-col">
             <label htmlFor="property" className="block text-sm font-medium text-gray-700 mb-1">Property:</label>
