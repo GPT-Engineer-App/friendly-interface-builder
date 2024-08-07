@@ -3,6 +3,8 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { SearchableSelect } from "@/components/ui/searchable-select";
+import { useQuery } from "@tanstack/react-query";
+import { FlashingValueDisplay } from "@/components/ui/flashing-value-display";
 
 const countries = [
   { value: "SE", label: "Sweden" },
@@ -14,7 +16,6 @@ const countries = [
   { value: "DE", label: "Germany" },
   { value: "FR", label: "France" },
 ];
-import { FlashingValueDisplay } from "@/components/ui/flashing-value-display";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Plus, Trash2, RotateCcw, Sparkles, CalendarIcon, Clock, X, CheckIcon } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -34,12 +35,6 @@ const customers = [
   { value: "customer2", label: "Customer 2" },
   { value: "customer3", label: "Customer 3" },
   // Add more customers as needed
-];
-
-const markets = [
-  { value: "market1", label: "Market 1" },
-  { value: "market2", label: "Market 2" },
-  { value: "market3", label: "Market 3" },
 ];
 
 const properties = [
@@ -73,6 +68,24 @@ const Index = () => {
   const [isEndpointSet, setIsEndpointSet] = useState(false);
   const [customer, setCustomer] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
+
+  const { data: options, isLoading: isLoadingOptions, error: optionsError } = useQuery({
+    queryKey: ['debuggerOptions', endpoint],
+    queryFn: async () => {
+      if (!endpoint) return null;
+      const response = await fetch(`${endpoint}/debugger/options`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    },
+    enabled: !!endpoint && isEndpointSet,
+  });
+
+  const markets = options?.store_market_options?.map(option => ({
+    value: option.id,
+    label: option.label
+  })) || [];
   const [customerCity, setCustomerCity] = useState("");
   const [customerZip, setCustomerZip] = useState("");
   const [customerCountryCode, setCustomerCountryCode] = useState("SE");
@@ -299,13 +312,19 @@ const Index = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="flex flex-col">
             <label htmlFor="market" className="block text-sm font-medium text-gray-700 mb-1">Market:</label>
-            <SearchableSelect
-              id="market"
-              value={market}
-              onChange={setMarket}
-              items={markets}
-              className="w-full"
-            />
+            {isLoadingOptions ? (
+              <div className="text-sm text-gray-500">Loading markets...</div>
+            ) : optionsError ? (
+              <div className="text-sm text-red-500">Error loading markets</div>
+            ) : (
+              <SearchableSelect
+                id="market"
+                value={market}
+                onChange={setMarket}
+                items={markets}
+                className="w-full"
+              />
+            )}
           </div>
           <div className="flex flex-col">
             <label htmlFor="property" className="block text-sm font-medium text-gray-700 mb-1">Property:</label>
