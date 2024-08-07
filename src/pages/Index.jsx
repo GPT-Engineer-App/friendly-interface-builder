@@ -25,13 +25,6 @@ import JsonView from 'react18-json-view'
 import 'react18-json-view/src/style.css'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command"
 
-const customers = [
-  { value: "customer1", label: "Customer 1" },
-  { value: "customer2", label: "Customer 2" },
-  { value: "customer3", label: "Customer 3" },
-  // Add more customers as needed
-];
-
 
 const products = [
   { sku: "SKU-4577-736", name: "Sneakers" },
@@ -93,7 +86,7 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [autoPredict, setAutoPredict] = useState(false);
-  const [shippingType, setShippingType] = useState(typeOptions[0]?.value || "airmee");
+  const [shippingMethod, setShippingMethod] = useState(typeOptions[0]?.value || "airmee");
   const [handlingType, setHandlingType] = useState(typeOptions[0]?.value || "airmee");
   const [paymentType, setPaymentType] = useState(typeOptions[0]?.value || "airmee");
   const [otherDiscountsType, setOtherDiscountsType] = useState(typeOptions[0]?.value || "airmee");
@@ -129,7 +122,7 @@ const Index = () => {
     setHandlingCost(0);
     setPaymentCost(0);
     setAutoPredict(true);
-    setShippingType("airmee");
+    setShippingMethod("airmee");
     setHandlingType("airmee");
     setPaymentType("airmee");
     setOtherDiscountsType("airmee");
@@ -187,7 +180,7 @@ const Index = () => {
       shipping: {
         cost: predictShippingCost ? null : shippingCost,
         predict: predictShippingCost,
-        type: shippingType
+        type: shippingMethod
       },
       handling: {
         cost: predictHandlingCost ? null : handlingCost,
@@ -628,8 +621,8 @@ const Index = () => {
               <td className="p-2 font-medium text-right text-sm">Type</td>
               <td className="p-2">
                 <SearchableSelect
-                  value={shippingType}
-                  onChange={setShippingType}
+                  value={shippingMethod}
+                  onChange={setShippingMethod}
                   items={typeOptions}
                   className="w-full"
                 />
