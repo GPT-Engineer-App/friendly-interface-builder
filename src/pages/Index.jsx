@@ -821,14 +821,14 @@ const Index = () => {
                   <td className="p-3 text-sm text-right">
                     <FlashingValueDisplay 
                       value={responseTime} 
-                      formatValue={(v) => `${v.toFixed(0)}ms`} 
+                      formatValue={(v) => `${(v/1000.0).toFixed(0)}s`} 
                     />
                   </td>
                 </tr>
                 <tr>
                   <td className="p-3 text-sm font-medium">Total Weight</td>
                   <td className="p-3 text-sm text-right">
-                    <FlashingValueDisplay value={response.total_grams} formatValue={(v) => `${v.toFixed(0)}`} />
+                    <FlashingValueDisplay value={response.total_grams} formatValue={(v) => `${v.toFixed(2)}`} />
                   </td>
                 </tr>
               </tbody>
