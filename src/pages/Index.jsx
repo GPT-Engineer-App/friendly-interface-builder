@@ -5,12 +5,6 @@ import { Button } from "@/components/ui/button";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import { useQuery } from "@tanstack/react-query";
 import { FlashingValueDisplay } from "@/components/ui/flashing-value-display";
-
-const countries = [
-  { value: "SE", label: "Sweden" },
-  { value: "NO", label: "Norway" },
-  { value: "FI", label: "Finland" },
-];
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Plus, Trash2, RotateCcw, Sparkles, CalendarIcon, Clock, X, CheckIcon } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -58,7 +52,10 @@ const Index = () => {
       return {
         store_market_options: data.store_market_options || [],
         store_property_options: data.store_property_options || [],
-        store_type_options: data.store_type_options || []
+        store_type_options: data.store_type_options || [],
+        shipping_method_options: data.shipping_method_options || [],
+        payment_type_options: data.payment_type_options || [],
+        handling_type_options: data.handling_type_options || []
       };
     },
     enabled: !!endpoint && isEndpointSet,
@@ -67,6 +64,9 @@ const Index = () => {
   const markets = options?.store_market_options || [];
   const properties = options?.store_property_options || [];
   const storeTypes = options?.store_type_options || [];
+  const shippingMethods = options?.shipping_method_options || [];
+  const paymentTypes = options?.payment_type_options || [];
+  const handlingTypes = options?.handling_type_options || [];
   const [customerCity, setCustomerCity] = useState("");
   const [customerZip, setCustomerZip] = useState("");
   const [customerCountryCode, setCustomerCountryCode] = useState(countries[0]?.value || "SE");
@@ -86,13 +86,13 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [autoPredict, setAutoPredict] = useState(false);
-  const [shippingMethod, setShippingMethod] = useState(typeOptions[0]?.value || "airmee");
-  const [handlingType, setHandlingType] = useState(typeOptions[0]?.value || "airmee");
-  const [paymentType, setPaymentType] = useState(typeOptions[0]?.value || "airmee");
-  const [otherDiscountsType, setOtherDiscountsType] = useState(typeOptions[0]?.value || "airmee");
-  const [market, setMarket] = useState(markets[0]?.value || "");
-  const [property, setProperty] = useState(properties[0]?.value || "");
-  const [storeType, setStoreType] = useState(storeTypes[0]?.value || "");
+  const [shippingMethod, setShippingMethod] = useState("");
+  const [handlingType, setHandlingType] = useState("");
+  const [paymentType, setPaymentType] = useState("");
+  const [otherDiscountsType, setOtherDiscountsType] = useState("");
+  const [market, setMarket] = useState("");
+  const [property, setProperty] = useState("");
+  const [storeType, setStoreType] = useState("");
 
   const [gp2plus, setGp2plus] = useState(0);
 
@@ -122,10 +122,10 @@ const Index = () => {
     setHandlingCost(0);
     setPaymentCost(0);
     setAutoPredict(true);
-    setShippingMethod("airmee");
-    setHandlingType("airmee");
-    setPaymentType("airmee");
-    setOtherDiscountsType("airmee");
+    setShippingMethod(shippingMethods[0] || "");
+    setHandlingType(handlingTypes[0] || "");
+    setPaymentType(paymentTypes[0] || "");
+    setOtherDiscountsType("");
   };
 
   const handleClearEndpoint = () => {
@@ -461,7 +461,7 @@ const Index = () => {
               id="customerCountryCode"
               value={customerCountryCode}
               onChange={setCustomerCountryCode}
-              items={countries}
+              items={markets.map(m => ({ value: m, label: m }))}
               className="w-full"
             />
           </div>
@@ -623,7 +623,7 @@ const Index = () => {
                 <SearchableSelect
                   value={shippingMethod}
                   onChange={setShippingMethod}
-                  items={typeOptions}
+                  items={shippingMethods.map(m => ({ value: m, label: m }))}
                   className="w-full"
                 />
               </td>
@@ -631,7 +631,7 @@ const Index = () => {
                 <SearchableSelect
                   value={handlingType}
                   onChange={setHandlingType}
-                  items={typeOptions}
+                  items={handlingTypes.map(t => ({ value: t, label: t }))}
                   className="w-full"
                 />
               </td>
@@ -639,15 +639,15 @@ const Index = () => {
                 <SearchableSelect
                   value={paymentType}
                   onChange={setPaymentType}
-                  items={typeOptions}
+                  items={paymentTypes.map(t => ({ value: t, label: t }))}
                   className="w-full"
                 />
               </td>
               <td className="p-2">
-                <SearchableSelect
+                <Input
+                  type="text"
                   value={otherDiscountsType}
-                  onChange={setOtherDiscountsType}
-                  items={typeOptions}
+                  onChange={(e) => setOtherDiscountsType(e.target.value)}
                   className="w-full"
                 />
               </td>
