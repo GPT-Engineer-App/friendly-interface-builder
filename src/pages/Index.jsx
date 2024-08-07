@@ -88,7 +88,7 @@ const Index = () => {
   })) || [];
   const [customerCity, setCustomerCity] = useState("");
   const [customerZip, setCustomerZip] = useState("");
-  const [customerCountryCode, setCustomerCountryCode] = useState(countries[0]?.value || "SE");
+  const [customerCountryCode, setCustomerCountryCode] = useState("SE");
   const [monitorDataLayer, setMonitorDataLayer] = useState(true);
   const [tableRows, setTableRows] = useState([
     { sku: "SKU-4577-736", product: "Sneakers", qty: 1, price: 123456.78, discount: 4568.90 }
@@ -105,13 +105,13 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [autoPredict, setAutoPredict] = useState(false);
-  const [shippingType, setShippingType] = useState(typeOptions[0]?.value || "airmee");
-  const [handlingType, setHandlingType] = useState(typeOptions[0]?.value || "airmee");
-  const [paymentType, setPaymentType] = useState(typeOptions[0]?.value || "airmee");
-  const [otherDiscountsType, setOtherDiscountsType] = useState(typeOptions[0]?.value || "airmee");
-  const [market, setMarket] = useState(markets[0]?.value || "");
-  const [property, setProperty] = useState(properties[0]?.value || "");
-  const [storeType, setStoreType] = useState(storeTypes[0]?.value || "");
+  const [shippingType, setShippingType] = useState("airmee");
+  const [handlingType, setHandlingType] = useState("airmee");
+  const [paymentType, setPaymentType] = useState("airmee");
+  const [otherDiscountsType, setOtherDiscountsType] = useState("airmee");
+  const [market, setMarket] = useState("");
+  const [property, setProperty] = useState("");
+  const [storeType, setStoreType] = useState("");
 
   const [gp2plus, setGp2plus] = useState(0);
 
