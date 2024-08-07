@@ -9,12 +9,7 @@ import { FlashingValueDisplay } from "@/components/ui/flashing-value-display";
 const countries = [
   { value: "SE", label: "Sweden" },
   { value: "NO", label: "Norway" },
-  { value: "DK", label: "Denmark" },
   { value: "FI", label: "Finland" },
-  { value: "US", label: "United States" },
-  { value: "GB", label: "United Kingdom" },
-  { value: "DE", label: "Germany" },
-  { value: "FR", label: "France" },
 ];
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Plus, Trash2, RotateCcw, Sparkles, CalendarIcon, Clock, X, CheckIcon } from "lucide-react";
@@ -37,17 +32,6 @@ const customers = [
   // Add more customers as needed
 ];
 
-const properties = [
-  { value: "property1", label: "Property 1" },
-  { value: "property2", label: "Property 2" },
-  { value: "property3", label: "Property 3" },
-];
-
-const storeTypes = [
-  { value: "type1", label: "Type 1" },
-  { value: "type2", label: "Type 2" },
-  { value: "type3", label: "Type 3" },
-];
 
 const products = [
   { sku: "SKU-4577-736", name: "Sneakers" },
@@ -77,15 +61,19 @@ const Index = () => {
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-      return response.json();
+      const data = await response.json();
+      return {
+        store_market_options: data.store_market_options || [],
+        store_property_options: data.store_property_options || [],
+        store_type_options: data.store_type_options || []
+      };
     },
     enabled: !!endpoint && isEndpointSet,
   });
 
-  const markets = options?.store_market_options?.map(option => ({
-    value: option.id,
-    label: option.label
-  })) || [];
+  const markets = options?.store_market_options || [];
+  const properties = options?.store_property_options || [];
+  const storeTypes = options?.store_type_options || [];
   const [customerCity, setCustomerCity] = useState("");
   const [customerZip, setCustomerZip] = useState("");
   const [customerCountryCode, setCustomerCountryCode] = useState(countries[0]?.value || "SE");
@@ -321,7 +309,7 @@ const Index = () => {
                 id="market"
                 value={market}
                 onChange={setMarket}
-                items={markets}
+                items={markets.map(m => ({ value: m, label: m }))}
                 className="w-full"
               />
             )}
@@ -332,7 +320,7 @@ const Index = () => {
               id="property"
               value={property}
               onChange={setProperty}
-              items={properties}
+              items={properties.map(p => ({ value: p, label: p }))}
               className="w-full"
             />
           </div>
@@ -342,7 +330,7 @@ const Index = () => {
               id="storeType"
               value={storeType}
               onChange={setStoreType}
-              items={storeTypes}
+              items={storeTypes.map(t => ({ value: t, label: t }))}
               className="w-full"
             />
           </div>
