@@ -5,46 +5,49 @@ import { Button } from "@/components/ui/button";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import { useQuery } from "@tanstack/react-query";
 import { FlashingValueDisplay } from "@/components/ui/flashing-value-display";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Plus, Trash2, RotateCcw, Sparkles, CalendarIcon, Clock, X, CheckIcon } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { format, set } from "date-fns";
+import { cn } from "@/lib/utils";
+import { Spinner } from "@/components/ui/spinner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { toast } from "sonner";
+import 'react18-json-view/src/style.css'
+
+const defaults = {  
+  "store_market": "SE",
+  "store_property": "zoo.se",
+  "store_type": "online",
+  "currency": "SEK",
+  "shipping_method": "air-std",
+  "handling_type": "unknown",
+  "payment_type": "card",
+  "customer_email": "niels@bosmainteractive.se",
+  "customer_city": "Saltsjö-Boo",
+  "customer_zip": "13239",
+  "customer_country_code": "SE",
+  "lines" : [
+    {
+      "product_id": "205666001",
+      "quantity": 2,
+      "unit_paid": 1566.4,
+      "unit_discount": 100
+    }
+  ]
+}
 
 const countries = [
   { value: "SE", label: "Sweden" },
   { value: "NO", label: "Norway" },
   { value: "FI", label: "Finland" },
 ];
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, Trash2, RotateCcw, Sparkles, CalendarIcon, Clock, X, CheckIcon } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
-import { format } from "date-fns";
-import { cn } from "@/lib/utils";
-import { Spinner } from "@/components/ui/spinner";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { toast } from "sonner";
-import JsonView from 'react18-json-view'
-import 'react18-json-view/src/style.css'
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command"
-
-
-const products = [
-  { sku: "SKU-4577-736", name: "Sneakers" },
-  { sku: "SKU-1234-567", name: "T-Shirt" },
-  { sku: "SKU-8901-234", name: "Jeans" },
-  { sku: "SKU-5678-901", name: "Jacket" },
-  // Add more products as needed
-];
-
-const typeOptions = [
-  { value: "airmee", label: "AIRMEE" },
-  { value: "default", label: "DEFAULT" },
-  { value: "klarna", label: "KLARNA" },
-];
 
 const Index = () => {
   const [endpoint, setEndpoint] = useState("");
   const [isEndpointSet, setIsEndpointSet] = useState(false);
-  const [customer, setCustomer] = useState("");
-  const [customerEmail, setCustomerEmail] = useState("");
 
   const { data: options, isLoading: isLoadingOptions, error: optionsError } = useQuery({
     queryKey: ['debuggerOptions', endpoint],
@@ -52,49 +55,68 @@ const Index = () => {
       if (!endpoint) return null;
       const response = await fetch(`${endpoint}/debugger/options`);
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        throw new Error(`Failed to load ${endpoint}/debugger/options`);
       }
       const data = await response.json();
-      return {
-        store_market_options: data.store_market_options || [],
-        store_property_options: data.store_property_options || [],
-        store_type_options: data.store_type_options || []
-      };
+
+      return data;
     },
     enabled: !!endpoint && isEndpointSet,
   });
 
-  const markets = options?.store_market_options || [];
-  const properties = options?.store_property_options || [];
+  //Store:
+  const storeMarkets = options?.store_market_options || [];
+  const [storeMarket, setStoreMarket] = useState(storeMarkets[0] || defaults.store_market);
+  const storeProperties = options?.store_property_options || [];
+  const [storeProperty, setStoreProperty] = useState(storeProperties[0] || defaults.store_property);
   const storeTypes = options?.store_type_options || [];
-  const [customerCity, setCustomerCity] = useState("");
-  const [customerZip, setCustomerZip] = useState("");
-  const [customerCountryCode, setCustomerCountryCode] = useState(countries[0]?.value || "SE");
+  const [storeType, setStoreType] = useState(storeTypes[0] || defaults.store_type);
+
+  //Customer:
+  const [customerId, setCustomerId] = useState("");
+  const [customerEmail, setCustomerEmail] = useState(defaults.customer_email);
+  const [customerCity, setCustomerCity] = useState(defaults.customer_city);
+  const [customerZip, setCustomerZip] = useState(defaults.customer_zip);
+  const [customerCountryCode, setCustomerCountryCode] = useState(countries[0]?.value || defaults.customer_country_code);
+
+  //Basket:
   const [monitorDataLayer, setMonitorDataLayer] = useState(true);
-  const [tableRows, setTableRows] = useState([
-    { sku: "SKU-4577-736", product: "Sneakers", qty: 1, price: 123456.78, discount: 4568.90 }
-  ]);
+  const [tableRows, setTableRows] = useState(defaults.lines);
+  
+  //Shipping:
+  const shippingMethods = options?.shipping_method_options || [];
+  const [shippingRevenue, setShippingRevenue] = useState(0);
+  const [shippingCost, setShippingCost] = useState(0);
+  const [predictShippingCost, setPredictShippingCost] = useState(true);
+  const [shippingMethod, setShippingMethod] = useState(shippingMethods[0] || defaults.shipping_method);
+
+  //Handling:
+  const handlingTypes = options?.handling_type_options || [];
+  const [handlingRevenue, setHandlingRevenue] = useState(0);
+  const [handlingCost, setHandlingCost] = useState(0);
+  const [predictHandlingCost, setPredictHandlingCost] = useState(true);
+  const [handlingType, setHandlingType] = useState(handlingTypes[0] || defaults.handling_type);
+  
+  //Payment:
+  const paymentTypes = options?.payment_type_options || [];
+  const [paymentRevenue, setPaymentRevenue] = useState(0);
+  const [paymentCost, setPaymentCost] = useState(0);
+  const [predictPaymentCost, setPredictPaymentCost] = useState(true);
+  const [paymentType, setPaymentType] = useState(paymentTypes[0] || defaults.payment_type);
+
+  //Other Discounts:
+  const [otherDiscounts, setOtherDiscounts] = useState(0);
+  const [otherDiscountsType, setOtherDiscountsType] = useState("");
+
+  const [response, setResponse] = useState({});
+  const [showResponse, setShowResponse] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [autoPredict, setAutoPredict] = useState(false);
+
+
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState("12:00");
   const [showOrderDate, setShowOrderDate] = useState(true);
-  const [predictShippingCost, setPredictShippingCost] = useState(true);
-  const [predictHandlingCost, setPredictHandlingCost] = useState(true);
-  const [predictPaymentCost, setPredictPaymentCost] = useState(true);
-  const [shippingCost, setShippingCost] = useState(0);
-  const [handlingCost, setHandlingCost] = useState(0);
-  const [paymentCost, setPaymentCost] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [autoPredict, setAutoPredict] = useState(false);
-  const [shippingMethod, setShippingMethod] = useState(typeOptions[0]?.value || "airmee");
-  const [handlingType, setHandlingType] = useState(typeOptions[0]?.value || "airmee");
-  const [paymentType, setPaymentType] = useState(typeOptions[0]?.value || "airmee");
-  const [otherDiscountsType, setOtherDiscountsType] = useState(typeOptions[0]?.value || "airmee");
-  const [market, setMarket] = useState(markets[0]?.value || "");
-  const [property, setProperty] = useState(properties[0]?.value || "");
-  const [storeType, setStoreType] = useState(storeTypes[0]?.value || "");
-
-  const [gp2plus, setGp2plus] = useState(0);
 
   useEffect(() => {
     const storedEndpoint = localStorage.getItem('endpoint');
@@ -105,27 +127,44 @@ const Index = () => {
   }, []);
 
   const handleReset = () => {
-    setCustomer("");
-    setCustomerEmail("");
-    setCustomerCity("");
-    setCustomerZip("");
-    setCustomerCountryCode("");
+    setStoreMarket(storeMarkets[0] || "");
+    setStoreProperty(storeProperties[0] || "");
+    setStoreType(storeTypes[0] || "");
+
+    setCustomerId("");
+    setCustomerEmail(defaults.customer_email);
+    setCustomerCity(defaults.customer_city);
+    setCustomerZip(defaults.customer_zip);
+    setCustomerCountryCode(defaults.customer_country_code);
+
     setMonitorDataLayer(true);
-    setTableRows([{ sku: "", product: "", qty: 0, price: 0, discount: 0 }]);
+    setTableRows([{ product_id: "", quantity: 1, unit_paid: 0, unit_discount: 0 }]);
+
+    setShippingCost(0);
+    setShippingRevenue(0);
+    setShippingMethod(shippingMethods[0]);
+    setPredictShippingCost(true);
+
+    setHandlingRevenue(0);
+    setHandlingCost(0);
+    setHandlingType(handlingTypes[0]);
+    setPredictHandlingCost(true);
+
+    setPaymentRevenue(0);  
+    setPaymentCost(0);
+    setPaymenetType(paymentTypes[0]);
+    setPredictPaymentCost(true);
+
+    setOtherDiscounts(0);
+    setOtherDiscountsType("");
+
+    setResponse({});
+    setShowResponse(false);
+
     setDate(new Date());
     setTime("12:00");
     setShowOrderDate(true);
-    setPredictShippingCost(true);
-    setPredictHandlingCost(true);
-    setPredictPaymentCost(true);
-    setShippingCost(0);
-    setHandlingCost(0);
-    setPaymentCost(0);
     setAutoPredict(true);
-    setShippingMethod("airmee");
-    setHandlingType("airmee");
-    setPaymentType("airmee");
-    setOtherDiscountsType("airmee");
   };
 
   const handleClearEndpoint = () => {
@@ -135,7 +174,7 @@ const Index = () => {
   }
 
   const addProduct = () => {
-    setTableRows([...tableRows, { sku: "", product: "", qty: 0, price: 0, discount: 0 }]);
+    setTableRows([...tableRows, { product_id: "", quantity: 1, unit_paid: 0, unit_discount: 0 }]);
   };
 
   const removeRow = (index) => {
@@ -166,63 +205,58 @@ const Index = () => {
   const handlePredict = async () => {
     setIsLoading(true);
     const requestData = {
-      endpoint: endpoint,
-      customer: {
-        id: customer,
-        email: customerEmail,
+      store_market: storeMarket,
+      store_property: storeProperty,
+      store_type: storeType,
+      user_agent: navigator.userAgent,
+      customer_id: null,
+      customer_email: customerEmail,
+      currency: defaults.currency,
+      lines: tableRows,
+      shipping: {
+        cost: predictShippingCost ? null : shippingCost,
+        revenue: shippingRevenue,
+        method: shippingMethod,
         city: customerCity,
         zip: customerZip,
         country_code: customerCountryCode
       },
-      monitorDataLayer,
-      lines: tableRows,
-      orderDate: showOrderDate ? new Date().toISOString() : `${format(date, "yyyy-MM-dd")}T${time}:00`,
-      shipping: {
-        cost: predictShippingCost ? null : shippingCost,
-        predict: predictShippingCost,
-        type: shippingMethod
-      },
       handling: {
         cost: predictHandlingCost ? null : handlingCost,
-        predict: predictHandlingCost,
+        revenue: handlingRevenue,
         type: handlingType
       },
       payment: {
         cost: predictPaymentCost ? null : paymentCost,
-        predict: predictPaymentCost,
+        revenue: paymentRevenue,
         type: paymentType
       },
-      otherDiscounts: {
-        type: otherDiscountsType
-      }
+      otherDiscounts: otherDiscounts > 0 ? [{
+        type: otherDiscountsType,
+        amount: otherDiscounts
+      }] : null 
     };
 
     try {
-      const response = await fetch(endpoint, {
+      //https://webhook.site/2fa325f7-e3f7-41f2-a502-cc1c75c8d899/
+      const response = await fetch(endpoint + "/predict", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(requestData),
-        mode: 'no-cors'
+        body: JSON.stringify(requestData)
       });
 
-      // Since 'no-cors' mode returns an opaque response, we can't check response.ok
-      // We'll assume the request was successful if it doesn't throw an error
-      setShowModal(true);
-      toast.success("Prediction request sent successfully");
+      setResponse(await response.json());
+      setShowResponse(true);
+
     } catch (error) {
       console.error('Error:', error);
-      toast.error("Failed to send prediction request");
+      toast.error("Failed retreive prediction request.");
     } finally {
       setIsLoading(false);
     }
   };
-
-  const handleGp2 = () => {
-    const randomGp2plus = Math.random() * 100;
-    setGp2plus(randomGp2plus);
-  }
 
   const handleSetEndpoint = () => {
     if (endpoint.trim()) {
@@ -274,7 +308,7 @@ const Index = () => {
           <p className="text-center text-gray-700">{optionsError.message}</p>
           <Button
             className="w-full"
-            onClick={() => window.location.reload()}
+            onClick={() => { handleClearEndpoint(); window.location.reload(); }}
           >
             Retry
           </Button>
@@ -322,20 +356,20 @@ const Index = () => {
           <div className="flex flex-col">
             <label htmlFor="market" className="block text-sm font-medium text-gray-700 mb-1">Market:</label>
             <SearchableSelect
-              id="market"
-              value={market}
-              onChange={setMarket}
-              items={markets.map(m => ({ value: m, label: m }))}
+              id="storeMarket"
+              value={storeMarket}
+              onChange={setStoreMarket}
+              items={storeMarkets.map(m => ({ value: m, label: m }))}
               className="w-full"
             />
           </div>
           <div className="flex flex-col">
             <label htmlFor="property" className="block text-sm font-medium text-gray-700 mb-1">Property:</label>
             <SearchableSelect
-              id="property"
-              value={property}
-              onChange={setProperty}
-              items={properties.map(p => ({ value: p, label: p }))}
+              id="storeProperty"
+              value={storeProperty}
+              onChange={setStoreProperty}
+              items={storeProperties.map(p => ({ value: p, label: p }))}
               className="w-full"
             />
           </div>
@@ -370,9 +404,9 @@ const Index = () => {
           <TableHeader>
             <TableRow>
               <TableHead className="w-[40%]">Product</TableHead>
-              <TableHead className="w-[20%]">Qty</TableHead>
-              <TableHead className="w-[20%]">Price</TableHead>
-              <TableHead className="w-[20%]">Discount</TableHead>
+              <TableHead className="w-[20%]">Quantity</TableHead>
+              <TableHead className="w-[20%]">Unit Paid</TableHead>
+              <TableHead className="w-[20%]">Unit Discount</TableHead>
               <TableHead></TableHead>
             </TableRow>
           </TableHeader>
@@ -380,33 +414,32 @@ const Index = () => {
             {tableRows.map((row, index) => (
               <TableRow key={index}>
                 <TableCell className="w-[40%]">
-                  <SearchableSelect
-                    value={row.sku}
-                    onChange={(value) => updateRow(index, 'sku', value)}
-                    items={products.map(product => ({ value: product.sku, label: `${product.name} (${product.sku})` }))}
+                  <Input
+                    value={row.product_id}
+                    onChange={(e) => updateRow(index, 'product_id', e.target.value)}
                     className="w-full"
                   />
                 </TableCell>
                 <TableCell className="w-[20%]">
                   <Input
                     type="number"
-                    value={row.qty}
-                    onChange={(e) => updateRow(index, 'qty', parseInt(e.target.value))}
+                    value={row.quantity}
+                    onChange={(e) => updateRow(index, 'quantity', parseInt(e.target.value))}
                   />
                 </TableCell>
                 <TableCell className="w-[20%]">
                   <Input
                     type="number"
-                    value={row.price}
-                    onChange={(e) => updateRow(index, 'price', parseFloat(e.target.value))}
+                    value={row.unit_paid}
+                    onChange={(e) => updateRow(index, 'unit_paid', parseFloat(e.target.value))}
                     step="0.1"
                   />
                 </TableCell>
                 <TableCell className="w-[20%]">
                   <Input
                     type="number"
-                    value={row.discount}
-                    onChange={(e) => updateRow(index, 'discount', parseFloat(e.target.value))}
+                    value={row.unit_discount}
+                    onChange={(e) => updateRow(index, 'unit_discount', parseFloat(e.target.value))}
                     step="0.1"
                   />
                 </TableCell>
@@ -535,13 +568,13 @@ const Index = () => {
             <tr>
               <td className="p-2 font-medium text-right text-sm">Revenue</td>
               <td className="p-2">
-                <Input type="number" defaultValue={0} step="0.01" className="w-full" />
+                <Input id="shippingRevenue" type="number" value={shippingRevenue} step="0.1" onChange={(e) => setShippingRevenue(e.target.value)} className="w-full" />
               </td>
               <td className="p-2">
-                <Input type="number" defaultValue={0} step="0.01" className="w-full" />
+                <Input id="handlingRevenue" type="number" value={handlingRevenue} step="0.1" onChange={(e) => setHandlingRevenue(e.target.value)} className="w-full" />
               </td>
               <td className="p-2">
-                <Input type="number" defaultValue={0} step="0.01" className="w-full" />
+                <Input id="paymentRevenue" type="number" value={paymentRevenue} step="0.1" onChange={(e) => setPaymentRevenue(e.target.value)} className="w-full" />
               </td>
               <td className="p-2"></td>
             </tr>
@@ -614,7 +647,12 @@ const Index = () => {
                 )}
               </td>
               <td className="p-2">
-                <Input type="number" defaultValue={0} step="0.01" className="w-full" />
+                <Input
+                  type="number" 
+                  step="1" 
+                  value={otherDiscounts}
+                  onChange={(e) => setOtherDiscounts(parseFloat(e.target.value))}
+                  className="w-full" />
               </td>
             </tr>
             <tr>
@@ -623,7 +661,7 @@ const Index = () => {
                 <SearchableSelect
                   value={shippingMethod}
                   onChange={setShippingMethod}
-                  items={typeOptions}
+                  items={shippingMethods.map(m => ({ value: m, label: m }))}
                   className="w-full"
                 />
               </td>
@@ -631,7 +669,7 @@ const Index = () => {
                 <SearchableSelect
                   value={handlingType}
                   onChange={setHandlingType}
-                  items={typeOptions}
+                  items={handlingTypes.map(m => ({ value: m, label: m }))}
                   className="w-full"
                 />
               </td>
@@ -639,15 +677,14 @@ const Index = () => {
                 <SearchableSelect
                   value={paymentType}
                   onChange={setPaymentType}
-                  items={typeOptions}
+                  items={paymentTypes.map(m => ({ value: m, label: m }))}
                   className="w-full"
                 />
               </td>
               <td className="p-2">
-                <SearchableSelect
+                <Input
                   value={otherDiscountsType}
-                  onChange={setOtherDiscountsType}
-                  items={typeOptions}
+                  onChange={(e) => setOtherDiscountsType(e.target.value)}
                   className="w-full"
                 />
               </td>
@@ -665,7 +702,8 @@ const Index = () => {
           )}
           Predict
         </Button>
-        {/* <div className="flex items-center space-x-2">
+        {/* 
+        <div className="flex items-center space-x-2">
           <Checkbox
             id="autoPredict"
             checked={autoPredict}
@@ -674,88 +712,122 @@ const Index = () => {
           <label htmlFor="autoPredict" className="text-sm font-medium text-gray-700">
             Auto
           </label>
-        </div> */}
-        {/* <Button onClick={handleGp2}>Randomize GP2+</Button> */}
+        </div> 
+        */}
       </div>
 
-      <div className="flex space-x-4">
-        <div className="w-64 bg-white">
-          <table className="w-full">
-            <tbody>
+      { showResponse && ( 
+        <div className="flex space-x-4">
+          <div className="w-64 bg-white">
+            <table className="w-full">
+              <tbody>
+                <tr className="bg-gray-50">
+                  <td className="p-3 text-sm font-medium">Kickbacks</td>
+                  <td className="p-3 text-sm text-right">
+                    <FlashingValueDisplay value={response.units_kickback} formatValue={(v) => `${v.toFixed(2)}`} />
+                  </td>
+                </tr>
+                <tr>
+                  <td className="p-3 text-sm font-medium">PLTV</td>
+                  <td className="p-3 text-sm text-right">
+                    n/a
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div className="w-64 bg-white">
+            <table className="w-full">
+              <tbody>
+                <tr className="bg-gray-50">
+                  <td className="p-3 text-sm font-medium">Cogs</td>
+                  <td className="p-3 text-sm text-right">
+                    <FlashingValueDisplay value={response.units_cost} formatValue={(v) => `${v.toFixed(2)}`} />
+                  </td>
+                </tr>
+                <tr>
+                  <td className="p-3 text-sm font-medium">Shipping</td>
+                  <td className="p-3 text-sm text-right">
+                    <FlashingValueDisplay value={response.predicted_shipping_cost} formatValue={(v) => `${v.toFixed(2)}`} />
+                  </td>
+                </tr>
+                <tr className="bg-gray-50">
+                  <td className="p-3 text-sm font-medium">Handling</td>
+                  <td className="p-3 text-sm text-right">
+                    <FlashingValueDisplay value={response.predicted_handling_cost} formatValue={(v) => `${v.toFixed(2)}`} />
+                  </td>
+                </tr>
+                <tr>
+                  <td className="p-3 text-sm font-medium">Payment</td>
+                  <td className="p-3 text-sm text-right">
+                    <FlashingValueDisplay value={response.predicted_payment_cost} formatValue={(v) => `${v.toFixed(2)}`} />
+                  </td>
+                </tr>
+                <tr className="bg-gray-50">
+                  <td className="p-3 text-sm font-medium">Refunds</td>
+                  <td className="p-3 text-sm text-right">
+                    n/a
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div className="w-64 bg-white">
+            <table className="w-full">
+              <tbody>
               <tr className="bg-gray-50">
-                <td className="p-3 text-sm font-medium">Cogs</td>
-                <td className="p-3 text-sm text-right">123</td>
-              </tr>
-              <tr>
-                <td className="p-3 text-sm font-medium">Shipping</td>
-                <td className="p-3 text-sm text-right">123</td>
-              </tr>
-              <tr className="bg-gray-50">
-                <td className="p-3 text-sm font-medium">Handling</td>
-                <td className="p-3 text-sm text-right">123</td>
-              </tr>
-              <tr>
-                <td className="p-3 text-sm font-medium">Payment</td>
-                <td className="p-3 text-sm text-right">123</td>
-              </tr>
-              <tr className="bg-gray-50">
-                <td className="p-3 text-sm font-medium">Return</td>
-                <td className="p-3 text-sm text-right">123</td>
-              </tr>
-              <tr>
-                <td className="p-3 text-sm font-medium">Future GP2</td>
-                <td className="p-3 text-sm text-right">123</td>
-              </tr>
-            </tbody>
-          </table>
+                  <td className="p-3 text-sm font-medium">Gross Sales</td>
+                  <td className="p-3 text-sm text-right">
+                    <FlashingValueDisplay value={response.gross_sales} formatValue={(v) => `${v.toFixed(2)}`} />
+                  </td>
+                </tr>
+                <tr>
+                  <td className="p-3 text-sm font-medium">GP1</td>
+                  <td className="p-3 text-sm text-right">
+                    <FlashingValueDisplay value={response.gp1} formatValue={(v) => `${v.toFixed(2)}`} />
+                  </td>
+                </tr>
+                <tr className="bg-gray-50">
+                  <td className="p-3 text-sm font-medium">GM1</td>
+                  <td className="p-3 text-sm text-right">
+                    <FlashingValueDisplay value={response.gm1} formatValue={(v) => `${(v*100).toFixed(2)}%`} />
+                  </td>
+                </tr>
+                <tr>
+                  <td className="p-3 text-sm font-medium">GP2</td>
+                  <td className="p-3 text-sm text-right">
+                    <FlashingValueDisplay value={response.gp2} formatValue={(v) => `${v.toFixed(2)}`} />
+                  </td>
+                </tr>
+                <tr className="bg-gray-50">
+                  <td className="p-3 text-sm font-medium">GM2</td>
+                  <td className="p-3 text-sm text-right">
+                    <FlashingValueDisplay value={response.gm2} formatValue={(v) => `${(v*100).toFixed(2)}%`} />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div className="w-64 bg-white">
+            <table className="w-full">
+              <tbody>
+                <tr className="bg-gray-50">
+                  <td className="p-3 text-sm font-medium">Response Time</td>
+                  <td className="p-3 text-sm text-right">589ms</td>
+                </tr>
+                <tr>
+                  <td className="p-3 text-sm font-medium">Total Weight</td>
+                  <td className="p-3 text-sm text-right">
+                    <FlashingValueDisplay value={response.total_grams} formatValue={(v) => `${v.toFixed(0)}`} />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-        <div className="w-64 bg-white">
-          <table className="w-full">
-            <tbody>
-              <tr className="bg-gray-50">
-                <td className="p-3 text-sm font-medium">GP1</td>
-                <td className="p-3 text-sm text-right">123</td>
-              </tr>
-              <tr>
-                <td className="p-3 text-sm font-medium">GM1</td>
-                <td className="p-3 text-sm text-right">10%</td>
-              </tr>
-              <tr className="bg-gray-50">
-                <td className="p-3 text-sm font-medium">GP2</td>
-                <td className="p-3 text-sm text-right">123</td>
-              </tr>
-              <tr>
-                <td className="p-3 text-sm font-medium">GM2</td>
-                <td className="p-3 text-sm text-right">10%</td>
-              </tr>
-              <tr className="bg-gray-50">
-                <td className="p-3 text-sm font-medium">GP2+</td>
-                <td className="p-3 text-sm text-right">
-                  <FlashingValueDisplay value={gp2plus} formatValue={(v) => `$${v.toFixed(2)}`} />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div className="w-64 bg-white">
-          <table className="w-full">
-            <tbody>
-              <tr className="bg-gray-50">
-                <td className="p-3 text-sm font-medium">Response Time</td>
-                <td className="p-3 text-sm text-right">589ms</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        {/* <JsonView src={ tableRows }/>
-        <SearchableSelect
-        options={frameworks}
-        placeholder="Select framework..."
-        emptyMessage="No framework found."
-        onChange={(value) => console.log(value)}
-      /> */}
-      </div>
-      <Dialog open={showModal} onOpenChange={setShowModal}>
+      )}
+
+      {/* <Dialog open={showModal} onOpenChange={setShowModal}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Prediction Result</DialogTitle>
@@ -764,7 +836,7 @@ const Index = () => {
             <p>Prediction request sent successfully. Check the webhook for details.</p>
           </div>
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
 
     </div>
   );
