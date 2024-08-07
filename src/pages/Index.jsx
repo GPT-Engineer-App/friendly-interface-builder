@@ -295,6 +295,42 @@ const Index = () => {
 
       </div>
 
+      <div className="w-full mx-auto p-6 bg-white shadow-md rounded-lg mb-6">
+        <h2 className="text-lg font-semibold mb-4">Store</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="flex flex-col">
+            <label htmlFor="market" className="block text-sm font-medium text-gray-700 mb-1">Market:</label>
+            <SearchableSelect
+              id="market"
+              value={market}
+              onChange={setMarket}
+              items={markets}
+              className="w-full"
+            />
+          </div>
+          <div className="flex flex-col">
+            <label htmlFor="property" className="block text-sm font-medium text-gray-700 mb-1">Property:</label>
+            <SearchableSelect
+              id="property"
+              value={property}
+              onChange={setProperty}
+              items={properties}
+              className="w-full"
+            />
+          </div>
+          <div className="flex flex-col">
+            <label htmlFor="storeType" className="block text-sm font-medium text-gray-700 mb-1">Type:</label>
+            <SearchableSelect
+              id="storeType"
+              value={storeType}
+              onChange={setStoreType}
+              items={storeTypes}
+              className="w-full"
+            />
+          </div>
+        </div>
+      </div>
+
       <div className="bg-white p-6 rounded-lg shadow">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold">Basket</h2>
@@ -414,42 +450,6 @@ const Index = () => {
               value={customerCountryCode}
               onChange={setCustomerCountryCode}
               items={countries}
-              className="w-full"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="w-full mx-auto p-6 bg-white shadow-md rounded-lg mb-6">
-        <h2 className="text-lg font-semibold mb-4">Store</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="flex flex-col">
-            <label htmlFor="market" className="block text-sm font-medium text-gray-700 mb-1">Market:</label>
-            <SearchableSelect
-              id="market"
-              value={market}
-              onChange={setMarket}
-              items={markets}
-              className="w-full"
-            />
-          </div>
-          <div className="flex flex-col">
-            <label htmlFor="property" className="block text-sm font-medium text-gray-700 mb-1">Property:</label>
-            <SearchableSelect
-              id="property"
-              value={property}
-              onChange={setProperty}
-              items={properties}
-              className="w-full"
-            />
-          </div>
-          <div className="flex flex-col">
-            <label htmlFor="storeType" className="block text-sm font-medium text-gray-700 mb-1">Type:</label>
-            <SearchableSelect
-              id="storeType"
-              value={storeType}
-              onChange={setStoreType}
-              items={storeTypes}
               className="w-full"
             />
           </div>
