@@ -12,7 +12,6 @@ import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Spinner } from "@/components/ui/spinner";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import JsonView from 'react18-json-view'
@@ -334,61 +333,55 @@ const Index = () => {
             />
           </div>
           <div className="flex flex-col">
-            <label htmlFor="datetime" className="block text-sm font-medium text-gray-700 mb-1">Date:</label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant={"outline"}
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !date && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {formatDateTime()}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={handleDateTimeChange}
-                  initialFocus
-                />
-                <div className="p-3 border-t border-gray-200">
-                  <div className="flex items-center">
-                    <Clock className="mr-2 h-4 w-4" />
-                    <Input
-                      type="time"
-                      value={time}
-                      onChange={handleTimeChange}
-                      className="w-full"
-                    />
-                  </div>
-                </div>
-              </PopoverContent>
-            </Popover>
-          </div>
-        </div>
-        
-        <Accordion type="single" collapsible className="mb-4">
-          <AccordionItem value="advanced">
-            <AccordionTrigger>Advanced Options</AccordionTrigger>
-            <AccordionContent>
-              <div className="flex items-center space-x-2 mt-2">
+            <label htmlFor="datetime" className="block text-sm font-medium text-gray-700 mb-1"> Date:</label>
+            {showOrderDate ? (
+              <div className="flex items-center space-x-2">
                 <Checkbox
                   id="runtime"
                   checked={showOrderDate}
-                  onCheckedChange={(checked) => setShowOrderDate(checked)}
+                  onCheckedChange={() => setShowOrderDate(false)}
                 />
                 <label htmlFor="runtime" className="text-sm font-medium text-gray-700">
                   Use Current Time
                 </label>
               </div>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-
+            ) : (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !date && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {formatDateTime()}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={date}
+                    onSelect={handleDateTimeChange}
+                    initialFocus
+                  />
+                  <div className="p-3 border-t border-gray-200">
+                    <div className="flex items-center">
+                      <Clock className="mr-2 h-4 w-4" />
+                      <Input
+                        type="time"
+                        value={time}
+                        onChange={handleTimeChange}
+                        className="w-full"
+                      />
+                    </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            )}
+          </div>
+        </div>
         <table className="w-full border-collapse">
           <thead>
             <tr className="border-b">
