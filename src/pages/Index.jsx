@@ -404,16 +404,7 @@ const Index = () => {
 
       <div className="w-full mx-auto p-6 bg-white shadow-md rounded-lg mb-6">
         <h2 className="text-lg font-semibold mb-4">Customer</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="flex flex-col">
-            <label htmlFor="customer" className="block text-sm font-medium text-gray-700 mb-1">Customer:</label>
-            <Input
-              id="customer"
-              value={customer}
-              onChange={(e) => setCustomer(e.target.value)}
-              className="w-full"
-            />
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="flex flex-col">
             <label htmlFor="customerEmail" className="block text-sm font-medium text-gray-700 mb-1">Email:</label>
             <Input
@@ -434,7 +425,7 @@ const Index = () => {
             />
           </div>
           <div className="flex flex-col">
-            <label htmlFor="customerZip" className="block text-sm font-medium text-gray-700 mb-1">ZIP:</label>
+            <label htmlFor="customerZip" className="block text-sm font-medium text-gray-700 mb-1">Zip:</label>
             <Input
               id="customerZip"
               value={customerZip}
