@@ -24,7 +24,6 @@ import { toast } from "sonner";
 import JsonView from 'react18-json-view'
 import 'react18-json-view/src/style.css'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command"
-import { Spinner } from "@/components/ui/spinner";
 
 const customers = [
   { value: "customer1", label: "Customer 1" },
