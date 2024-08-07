@@ -112,6 +112,7 @@ const Index = () => {
   const [showResponse, setShowResponse] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [autoPredict, setAutoPredict] = useState(false);
+  const [responseTime, setResponseTime] = useState(null);
 
 
   const [date, setDate] = useState(new Date());
@@ -238,7 +239,7 @@ const Index = () => {
     };
 
     try {
-      //https://webhook.site/2fa325f7-e3f7-41f2-a502-cc1c75c8d899/
+      const startTime = performance.now();
       const response = await fetch(endpoint + "/predict", {
         method: 'POST',
         headers: {
@@ -246,13 +247,17 @@ const Index = () => {
         },
         body: JSON.stringify(requestData)
       });
+      const endTime = performance.now();
+      const timeTaken = endTime - startTime;
 
-      setResponse(await response.json());
+      const responseData = await response.json();
+      setResponse(responseData);
+      setResponseTime(timeTaken);
       setShowResponse(true);
 
     } catch (error) {
       console.error('Error:', error);
-      toast.error("Failed retreive prediction request.");
+      toast.error("Failed to retrieve prediction request.");
     } finally {
       setIsLoading(false);
     }
@@ -813,7 +818,12 @@ const Index = () => {
               <tbody>
                 <tr className="bg-gray-50">
                   <td className="p-3 text-sm font-medium">Response Time</td>
-                  <td className="p-3 text-sm text-right">589ms</td>
+                  <td className="p-3 text-sm text-right">
+                    <FlashingValueDisplay 
+                      value={responseTime} 
+                      formatValue={(v) => `${v.toFixed(0)}ms`} 
+                    />
+                  </td>
                 </tr>
                 <tr>
                   <td className="p-3 text-sm font-medium">Total Weight</td>
