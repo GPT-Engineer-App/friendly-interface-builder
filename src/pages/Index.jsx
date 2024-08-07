@@ -320,20 +320,24 @@ const Index = () => {
         </Button>
       </div>
 
+      <div className="w-full mx-auto p-6 bg-white shadow-md rounded-lg mb-6">
+        <h2 className="text-lg font-semibold mb-4">Customer</h2>
+        <div className="flex flex-col">
+          <label htmlFor="customer" className="block text-sm font-medium text-gray-700 mb-1">Customer:</label>
+          <Input
+            id="customer"
+            value={customer}
+            onChange={(e) => setCustomer(e.target.value)}
+            className="w-full"
+          />
+        </div>
+      </div>
+
       <div className="w-full mx-auto p-6 bg-white shadow-md rounded-lg">
         <h2 className="text-lg font-semibold mb-4">Order Details</h2>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           <div className="flex flex-col">
-            <label htmlFor="customer" className="block text-sm font-medium text-gray-700 mb-1">Customer:</label>
-            <Input
-              id="customer"
-              value={customer}
-              onChange={(e) => setCustomer(e.target.value)}
-              className="w-full"
-            />
-          </div>
-          <div className="flex flex-col">
-            <label htmlFor="datetime" className="block text-sm font-medium text-gray-700 mb-1"> Date:</label>
+            <label htmlFor="datetime" className="block text-sm font-medium text-gray-700 mb-1">Date:</label>
             {showOrderDate ? (
               <div className="flex items-center space-x-2">
                 <Checkbox
