@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import { FlashingValueDisplay } from "@/components/ui/flashing-value-display";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -17,6 +18,7 @@ import { toast } from "sonner";
 import JsonView from 'react18-json-view'
 import 'react18-json-view/src/style.css'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command"
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const customers = [
   { value: "customer1", label: "Customer 1" },
@@ -63,8 +65,34 @@ const Index = () => {
   const [handlingType, setHandlingType] = useState("airmee");
   const [paymentType, setPaymentType] = useState("airmee");
   const [otherDiscountsType, setOtherDiscountsType] = useState("airmee");
-
   const [gp2plus, setGp2plus] = useState(0);
+
+  const getFormState = useCallback(() => {
+    return {
+      customer,
+      monitorDataLayer,
+      tableRows,
+      orderDate: showOrderDate ? new Date().toISOString() : `${format(date, "yyyy-MM-dd")}T${time}:00`,
+      shipping: {
+        cost: predictShippingCost ? null : shippingCost,
+        predict: predictShippingCost,
+        type: shippingType
+      },
+      handling: {
+        cost: predictHandlingCost ? null : handlingCost,
+        predict: predictHandlingCost,
+        type: handlingType
+      },
+      payment: {
+        cost: predictPaymentCost ? null : paymentCost,
+        predict: predictPaymentCost,
+        type: paymentType
+      },
+      otherDiscounts: {
+        type: otherDiscountsType
+      }
+    };
+  }, [customer, monitorDataLayer, tableRows, showOrderDate, date, time, predictShippingCost, shippingCost, shippingType, predictHandlingCost, handlingCost, handlingType, predictPaymentCost, paymentCost, paymentType, otherDiscountsType]);
 
   useEffect(() => {
     const storedEndpoint = localStorage.getItem('endpoint');
@@ -544,8 +572,9 @@ const Index = () => {
       </div>
 
       <div className="flex space-x-4">
-        <div className="w-64 bg-white">
-          <table className="w-full">
+        <div className="flex-grow space-y-4">
+          <div className="w-64 bg-white">
+            <table className="w-full">
             <tbody>
               <tr className="bg-gray-50">
                 <td className="p-3 text-sm font-medium">Cogs</td>
@@ -612,13 +641,26 @@ const Index = () => {
             </tbody>
           </table>
         </div>
-        {/* <JsonView src={ tableRows }/>
-        <SearchableSelect
-        options={frameworks}
-        placeholder="Select framework..."
-        emptyMessage="No framework found."
-        onChange={(value) => console.log(value)}
-      /> */}
+        </div>
+        <Card className="w-96">
+          <CardHeader>
+            <CardTitle>Debug Panel</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ScrollArea className="h-[500px] w-full">
+              <pre className="text-xs">{JSON.stringify(getFormState(), null, 2)}</pre>
+            </ScrollArea>
+            <Button 
+              className="mt-4 w-full"
+              onClick={() => {
+                navigator.clipboard.writeText(JSON.stringify(getFormState(), null, 2));
+                toast.success("Form state copied to clipboard");
+              }}
+            >
+              Copy as JSON
+            </Button>
+          </CardContent>
+        </Card>
       </div>
       <Dialog open={showModal} onOpenChange={setShowModal}>
         <DialogContent>
