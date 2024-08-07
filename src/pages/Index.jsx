@@ -37,6 +37,24 @@ const customers = [
   // Add more customers as needed
 ];
 
+const markets = [
+  { value: "market1", label: "Market 1" },
+  { value: "market2", label: "Market 2" },
+  { value: "market3", label: "Market 3" },
+];
+
+const properties = [
+  { value: "property1", label: "Property 1" },
+  { value: "property2", label: "Property 2" },
+  { value: "property3", label: "Property 3" },
+];
+
+const storeTypes = [
+  { value: "type1", label: "Type 1" },
+  { value: "type2", label: "Type 2" },
+  { value: "type3", label: "Type 3" },
+];
+
 const products = [
   { sku: "SKU-4577-736", name: "Sneakers" },
   { sku: "SKU-1234-567", name: "T-Shirt" },
@@ -79,6 +97,9 @@ const Index = () => {
   const [handlingType, setHandlingType] = useState("airmee");
   const [paymentType, setPaymentType] = useState("airmee");
   const [otherDiscountsType, setOtherDiscountsType] = useState("airmee");
+  const [market, setMarket] = useState("");
+  const [property, setProperty] = useState("");
+  const [storeType, setStoreType] = useState("");
 
   const [gp2plus, setGp2plus] = useState(0);
 
@@ -393,6 +414,42 @@ const Index = () => {
               value={customerCountryCode}
               onChange={setCustomerCountryCode}
               items={countries}
+              className="w-full"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="w-full mx-auto p-6 bg-white shadow-md rounded-lg mb-6">
+        <h2 className="text-lg font-semibold mb-4">Store</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="flex flex-col">
+            <label htmlFor="market" className="block text-sm font-medium text-gray-700 mb-1">Market:</label>
+            <SearchableSelect
+              id="market"
+              value={market}
+              onChange={setMarket}
+              items={markets}
+              className="w-full"
+            />
+          </div>
+          <div className="flex flex-col">
+            <label htmlFor="property" className="block text-sm font-medium text-gray-700 mb-1">Property:</label>
+            <SearchableSelect
+              id="property"
+              value={property}
+              onChange={setProperty}
+              items={properties}
+              className="w-full"
+            />
+          </div>
+          <div className="flex flex-col">
+            <label htmlFor="storeType" className="block text-sm font-medium text-gray-700 mb-1">Type:</label>
+            <SearchableSelect
+              id="storeType"
+              value={storeType}
+              onChange={setStoreType}
+              items={storeTypes}
               className="w-full"
             />
           </div>
