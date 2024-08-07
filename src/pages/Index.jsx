@@ -13,7 +13,6 @@ const countries = [
   { value: "GB", label: "United Kingdom" },
   { value: "DE", label: "Germany" },
   { value: "FR", label: "France" },
-  // Add more countries as needed
 ];
 import { FlashingValueDisplay } from "@/components/ui/flashing-value-display";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -334,7 +333,7 @@ const Index = () => {
       <div className="bg-white p-6 rounded-lg shadow">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold">Basket</h2>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 hidden">
             <Checkbox
               id="monitorDataLayer"
               checked={monitorDataLayer}
@@ -457,9 +456,9 @@ const Index = () => {
       </div>
 
       <div className="w-full mx-auto p-6 bg-white shadow-md rounded-lg">
-        <h2 className="text-lg font-semibold mb-4">Order Details</h2>
+        <h2 className="text-lg font-semibold mb-4">Details</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-          <div className="flex flex-col">
+          <div className="flex flex-col hidden">
             <label htmlFor="datetime" className="block text-sm font-medium text-gray-700 mb-1">Date:</label>
             {showOrderDate ? (
               <div className="flex items-center space-x-2">
