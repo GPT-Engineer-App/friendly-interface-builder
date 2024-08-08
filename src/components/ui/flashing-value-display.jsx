@@ -9,14 +9,13 @@ const FlashingValueDisplay = ({
   const [flashColor, setFlashColor] = useState('');
   const prevValueRef = useRef(value);
   const isFirstRender = useRef(true);
+  const flashTimeout = useRef(null);
 
   useEffect(() => {
     if (typeof value !== 'number') {
       console.warn('FlashingValueDisplay received a non-numeric value');
       return;
     }
-
-    setDisplayValue(formatValue(value));
 
     if (isFirstRender.current) {
       isFirstRender.current = false;
@@ -27,11 +26,24 @@ const FlashingValueDisplay = ({
         setFlashColor('red');
       }
 
-      const timer = setTimeout(() => setFlashColor(''), 300);
-      return () => clearTimeout(timer);
+      if (flashTimeout.current) {
+        clearTimeout(flashTimeout.current);
+      }
+
+      flashTimeout.current = setTimeout(() => {
+        setFlashColor('');
+        flashTimeout.current = null;
+      }, 300);
     }
 
+    setDisplayValue(formatValue(value));
     prevValueRef.current = value;
+
+    return () => {
+      if (flashTimeout.current) {
+        clearTimeout(flashTimeout.current);
+      }
+    };
   }, [value, formatValue]);
 
   const getBackgroundColor = () => {

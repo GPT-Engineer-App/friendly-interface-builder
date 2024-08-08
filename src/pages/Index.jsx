@@ -742,6 +742,12 @@ const Index = () => {
                     n/a
                   </td>
                 </tr>
+                <tr className="bg-gray-50">
+                  <td className="p-3 text-sm font-medium">New Customer</td>
+                  <td className="p-3 text-sm text-right">
+                    {response.new_customer ? 'Yes' : 'No'}
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>
