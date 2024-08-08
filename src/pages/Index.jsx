@@ -16,6 +16,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import 'react18-json-view/src/style.css'
+import { JsonView } from 'react18-json-view'
 
 const defaults = {  
   "store_market": "SE",
@@ -114,7 +115,7 @@ const Index = () => {
   const [autoPredict, setAutoPredict] = useState(false);
   const [responseTime, setResponseTime] = useState(null);
   const [campaignsJson, setCampaignsJson] = useState(null);
-
+  const [showCampaignsModal, setShowCampaignsModal] = useState(false);
 
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState("12:00");
@@ -729,7 +730,14 @@ const Index = () => {
             <table className="w-full">
               <tbody>
                 <tr className="bg-gray-50">
-                  <td className="p-3 text-sm font-medium">Kickbacks</td>
+                  <td className="p-3 text-sm font-medium">
+                    <button
+                      onClick={() => setShowCampaignsModal(true)}
+                      className="text-blue-600 hover:underline"
+                    >
+                      Kickbacks
+                    </button>
+                  </td>
                   <td className="p-3 text-sm text-right">
                     <FlashingValueDisplay value={response.units_kickback} formatValue={(v) => `${v.toFixed(2)}`} />
                   </td>
@@ -838,6 +846,21 @@ const Index = () => {
           </div>
         </div>
       )}
+
+      <Dialog open={showCampaignsModal} onOpenChange={setShowCampaignsModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Campaigns JSON</DialogTitle>
+          </DialogHeader>
+          <div className="mt-4 max-h-[60vh] overflow-auto">
+            {campaignsJson ? (
+              <JsonView src={campaignsJson} />
+            ) : (
+              <p>No campaigns data available.</p>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
 
     </div>
   );
