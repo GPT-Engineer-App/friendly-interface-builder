@@ -113,6 +113,7 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [autoPredict, setAutoPredict] = useState(false);
   const [responseTime, setResponseTime] = useState(null);
+  const [campaignsJson, setCampaignsJson] = useState(null);
 
 
   const [date, setDate] = useState(new Date());
@@ -254,6 +255,7 @@ const Index = () => {
       setResponse(responseData);
       setResponseTime(timeTaken);
       setShowResponse(true);
+      setCampaignsJson(responseData.campaigns);
 
     } catch (error) {
       console.error('Error:', error);
@@ -573,13 +575,13 @@ const Index = () => {
             <tr>
               <td className="p-2 font-medium text-right text-sm">Revenue</td>
               <td className="p-2">
-                <Input id="shippingRevenue" type="number" value={shippingRevenue} step="0.1" onChange={(e) => setShippingRevenue(e.target.value)} className="w-full" />
+                <Input id="shippingRevenue" type="number" value={shippingRevenue} step="0.1" onChange={(e) => setShippingRevenue(parseFloat(e.target.value))} className="w-full" />
               </td>
               <td className="p-2">
-                <Input id="handlingRevenue" type="number" value={handlingRevenue} step="0.1" onChange={(e) => setHandlingRevenue(e.target.value)} className="w-full" />
+                <Input id="handlingRevenue" type="number" value={handlingRevenue} step="0.1" onChange={(e) => setHandlingRevenue(parseFloat(e.target.value))} className="w-full" />
               </td>
               <td className="p-2">
-                <Input id="paymentRevenue" type="number" value={paymentRevenue} step="0.1" onChange={(e) => setPaymentRevenue(e.target.value)} className="w-full" />
+                <Input id="paymentRevenue" type="number" value={paymentRevenue} step="0.1" onChange={(e) => setPaymentRevenue(parseFloat(e.target.value))} className="w-full" />
               </td>
               <td className="p-2"></td>
             </tr>
@@ -836,17 +838,6 @@ const Index = () => {
           </div>
         </div>
       )}
-
-      {/* <Dialog open={showModal} onOpenChange={setShowModal}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Prediction Result</DialogTitle>
-          </DialogHeader>
-          <div className="p-4">
-            <p>Prediction request sent successfully. Check the webhook for details.</p>
-          </div>
-        </DialogContent>
-      </Dialog> */}
 
     </div>
   );
