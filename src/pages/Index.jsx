@@ -256,7 +256,7 @@ const Index = () => {
       setResponse(responseData);
       setResponseTime(timeTaken);
       setShowResponse(true);
-      setCampaignsJson(responseData.campaigns);
+      setCampaignsJson(JSON.parse(responseData.campaigns));
 
     } catch (error) {
       console.error('Error:', error);
@@ -440,7 +440,6 @@ const Index = () => {
                     type="number"
                     value={row.unit_paid}
                     onChange={(e) => updateRow(index, 'unit_paid', parseFloat(e.target.value))}
-                    step="0.1"
                   />
                 </TableCell>
                 <TableCell className="w-[20%]">
@@ -448,7 +447,6 @@ const Index = () => {
                     type="number"
                     value={row.unit_discount}
                     onChange={(e) => updateRow(index, 'unit_discount', parseFloat(e.target.value))}
-                    step="0.1"
                   />
                 </TableCell>
                 <TableCell>
@@ -576,13 +574,13 @@ const Index = () => {
             <tr>
               <td className="p-2 font-medium text-right text-sm">Revenue</td>
               <td className="p-2">
-                <Input id="shippingRevenue" type="number" value={shippingRevenue} step="0.1" onChange={(e) => setShippingRevenue(parseFloat(e.target.value))} className="w-full" />
+                <Input id="shippingRevenue" type="number" value={shippingRevenue} onChange={(e) => setShippingRevenue(parseFloat(e.target.value))} className="w-full" />
               </td>
               <td className="p-2">
-                <Input id="handlingRevenue" type="number" value={handlingRevenue} step="0.1" onChange={(e) => setHandlingRevenue(parseFloat(e.target.value))} className="w-full" />
+                <Input id="handlingRevenue" type="number" value={handlingRevenue} onChange={(e) => setHandlingRevenue(parseFloat(e.target.value))} className="w-full" />
               </td>
               <td className="p-2">
-                <Input id="paymentRevenue" type="number" value={paymentRevenue} step="0.1" onChange={(e) => setPaymentRevenue(parseFloat(e.target.value))} className="w-full" />
+                <Input id="paymentRevenue" type="number" value={paymentRevenue} onChange={(e) => setPaymentRevenue(parseFloat(e.target.value))} className="w-full" />
               </td>
               <td className="p-2"></td>
             </tr>
@@ -605,7 +603,6 @@ const Index = () => {
                     type="number"
                     value={shippingCost}
                     onChange={(e) => setShippingCost(parseFloat(e.target.value))}
-                    step="0.01"
                     className="w-full"
                   />
                 )}
@@ -627,7 +624,6 @@ const Index = () => {
                     type="number"
                     value={handlingCost}
                     onChange={(e) => setHandlingCost(parseFloat(e.target.value))}
-                    step="0.01"
                     className="w-full"
                   />
                 )}
@@ -649,7 +645,6 @@ const Index = () => {
                     type="number"
                     value={paymentCost}
                     onChange={(e) => setPaymentCost(parseFloat(e.target.value))}
-                    step="0.01"
                     className="w-full"
                   />
                 )}
@@ -657,7 +652,6 @@ const Index = () => {
               <td className="p-2">
                 <Input
                   type="number" 
-                  step="1" 
                   value={otherDiscounts}
                   onChange={(e) => setOtherDiscounts(parseFloat(e.target.value))}
                   className="w-full" />
@@ -829,16 +823,13 @@ const Index = () => {
                 <tr className="bg-gray-50">
                   <td className="p-3 text-sm font-medium">Response Time</td>
                   <td className="p-3 text-sm text-right">
-                    <FlashingValueDisplay 
-                      value={responseTime} 
-                      formatValue={(v) => `${(v/1000.0).toFixed(0)}s`} 
-                    />
+                    {(responseTime/1000.0).toFixed(0)}s
                   </td>
                 </tr>
                 <tr>
                   <td className="p-3 text-sm font-medium">Total Weight</td>
                   <td className="p-3 text-sm text-right">
-                    <FlashingValueDisplay value={response.total_grams} formatValue={(v) => `${v.toFixed(2)}`} />
+                    {response.total_grams.toFixed(2)}
                   </td>
                 </tr>
               </tbody>
@@ -850,7 +841,7 @@ const Index = () => {
       <Dialog open={showCampaignsModal} onOpenChange={setShowCampaignsModal}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Campaigns JSON</DialogTitle>
+            <DialogTitle>Campaigns</DialogTitle>
           </DialogHeader>
           <div className="mt-4 max-h-[60vh] overflow-auto">
             {campaignsJson ? (

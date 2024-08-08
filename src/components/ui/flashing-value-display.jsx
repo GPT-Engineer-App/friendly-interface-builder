@@ -18,8 +18,6 @@ const FlashingValueDisplay = ({
 
     setDisplayValue(formatValue(value));
 
-    setDisplayValue(formatValue(value));
-
     if (isFirstRender.current) {
       isFirstRender.current = false;
     } else if (value !== prevValueRef.current) {
