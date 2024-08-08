@@ -16,7 +16,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import 'react18-json-view/src/style.css'
-import { JsonView } from 'react18-json-view'
+import JsonView from 'react18-json-view'
 
 const defaults = {  
   "store_market": "SE",
